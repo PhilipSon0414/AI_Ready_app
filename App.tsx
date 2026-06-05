@@ -5,34 +5,94 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import { loadStore } from './store/useAppStore';
-import UnitsScreen from './screens/UnitsScreen';
+import { loadStore, getStore } from './store/useAppStore';
+import DiagnosticScreen from './screens/DiagnosticScreen';
+import HomeScreen from './screens/HomeScreen';
 import QuizScreen from './screens/QuizScreen';
 import ReviewScreen from './screens/ReviewScreen';
 import DashScreen from './screens/DashScreen';
-import StatsScreen from './screens/StatsScreen';
+import BadgesScreen from './screens/BadgesScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
-
-function UnitsStack() {
-  return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Units" component={UnitsScreen} />
-      <Stack.Screen name="Quiz" component={QuizScreen} />
-    </Stack.Navigator>
-  );
-}
+const RootStack = createNativeStackNavigator();
 
 function TabIcon({ emoji, active }: { emoji: string; active: boolean }) {
   return <Text style={{ fontSize: 20, opacity: active ? 1 : 0.5 }}>{emoji}</Text>;
 }
 
+function HomeStack() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="HomeMain" component={HomeScreen} />
+      <Stack.Screen name="Quiz" component={QuizScreen} />
+    </Stack.Navigator>
+  );
+}
+
+function MainTabs() {
+  return (
+    <Tab.Navigator
+      screenOptions={{
+        headerShown: false,
+        tabBarActiveTintColor: '#6C63FF',
+        tabBarInactiveTintColor: '#9E9E9E',
+        tabBarStyle: {
+          backgroundColor: '#fff',
+          borderTopWidth: 1,
+          borderTopColor: '#E8ECF0',
+          paddingBottom: 4,
+          height: 60,
+        },
+        tabBarLabelStyle: { fontSize: 11, fontWeight: '600' },
+      }}
+    >
+      <Tab.Screen
+        name="HomeTabs"
+        component={HomeStack}
+        options={{
+          tabBarLabel: '학습',
+          tabBarIcon: ({ focused }) => <TabIcon emoji="📚" active={focused} />,
+        }}
+      />
+      <Tab.Screen
+        name="Review"
+        component={ReviewScreen}
+        options={{
+          tabBarLabel: '오답노트',
+          tabBarIcon: ({ focused }) => <TabIcon emoji="📝" active={focused} />,
+        }}
+      />
+      <Tab.Screen
+        name="Dashboard"
+        component={DashScreen}
+        options={{
+          tabBarLabel: '대시보드',
+          tabBarIcon: ({ focused }) => <TabIcon emoji="📊" active={focused} />,
+        }}
+      />
+      <Tab.Screen
+        name="Badges"
+        component={BadgesScreen}
+        options={{
+          tabBarLabel: '뱃지',
+          tabBarIcon: ({ focused }) => <TabIcon emoji="🏆" active={focused} />,
+        }}
+      />
+    </Tab.Navigator>
+  );
+}
+
 export default function App() {
   const [ready, setReady] = useState(false);
+  const [initialRoute, setInitialRoute] = useState<'Diagnostic' | 'MainTabs'>('MainTabs');
 
   useEffect(() => {
-    loadStore().finally(() => setReady(true));
+    loadStore().finally(() => {
+      const store = getStore();
+      setInitialRoute(store.diagnosticDone ? 'MainTabs' : 'Diagnostic');
+      setReady(true);
+    });
   }, []);
 
   if (!ready) {
@@ -47,54 +107,13 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <NavigationContainer>
-        <Tab.Navigator
-          screenOptions={{
-            headerShown: false,
-            tabBarActiveTintColor: '#6C63FF',
-            tabBarInactiveTintColor: '#9E9E9E',
-            tabBarStyle: {
-              backgroundColor: '#fff',
-              borderTopWidth: 1,
-              borderTopColor: '#E8ECF0',
-              paddingBottom: 4,
-              height: 60,
-            },
-            tabBarLabelStyle: { fontSize: 11, fontWeight: '600' },
-          }}
+        <RootStack.Navigator
+          initialRouteName={initialRoute}
+          screenOptions={{ headerShown: false }}
         >
-          <Tab.Screen
-            name="Home"
-            component={UnitsStack}
-            options={{
-              tabBarLabel: '학습',
-              tabBarIcon: ({ focused }) => <TabIcon emoji="📚" active={focused} />,
-            }}
-          />
-          <Tab.Screen
-            name="Review"
-            component={ReviewScreen}
-            options={{
-              tabBarLabel: '오답노트',
-              tabBarIcon: ({ focused }) => <TabIcon emoji="📝" active={focused} />,
-            }}
-          />
-          <Tab.Screen
-            name="Dashboard"
-            component={DashScreen}
-            options={{
-              tabBarLabel: '대시보드',
-              tabBarIcon: ({ focused }) => <TabIcon emoji="📊" active={focused} />,
-            }}
-          />
-          <Tab.Screen
-            name="Stats"
-            component={StatsScreen}
-            options={{
-              tabBarLabel: '통계',
-              tabBarIcon: ({ focused }) => <TabIcon emoji="🏆" active={focused} />,
-            }}
-          />
-        </Tab.Navigator>
+          <RootStack.Screen name="Diagnostic" component={DiagnosticScreen} />
+          <RootStack.Screen name="MainTabs" component={MainTabs} />
+        </RootStack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>
   );
