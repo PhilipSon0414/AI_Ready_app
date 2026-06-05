@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -25,7 +25,6 @@ function UnitsStack() {
 }
 
 function TabIcon({ emoji, active }: { emoji: string; active: boolean }) {
-  const { Text } = require('react-native');
   return <Text style={{ fontSize: 20, opacity: active ? 1 : 0.5 }}>{emoji}</Text>;
 }
 
@@ -40,6 +39,7 @@ export default function App() {
     return (
       <View style={styles.loading}>
         <ActivityIndicator size="large" color="#6C63FF" />
+        <Text style={styles.loadingText}>AI Ready 로딩 중...</Text>
       </View>
     );
   }
@@ -101,5 +101,12 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  loading: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#F5F7FA' },
+  loading: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F5F7FA',
+    gap: 12,
+  },
+  loadingText: { color: '#6C63FF', fontSize: 14, fontWeight: '600' },
 });
