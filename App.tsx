@@ -5,7 +5,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import { loadStore, getStore } from './store/useAppStore';
+import { loadStore, getStore, initAuth, loadFromCloud } from './store/useAppStore';
 import DiagnosticScreen from './screens/DiagnosticScreen';
 import HomeScreen from './screens/HomeScreen';
 import QuizScreen from './screens/QuizScreen';
@@ -15,6 +15,7 @@ import ClozeScreen from './screens/ClozeScreen';
 import ReviewScreen from './screens/ReviewScreen';
 import DashScreen from './screens/DashScreen';
 import BadgesScreen from './screens/BadgesScreen';
+import AccountScreen from './screens/AccountScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -36,7 +37,13 @@ function HomeStack() {
   );
 }
 
-function MainTabs() {
+type MainTabsProps = {
+  user: { id: string; email: string } | null;
+  onAuthSuccess: () => void;
+  onSignOut: () => void;
+};
+
+function MainTabs({ user, onAuthSuccess, onSignOut }: MainTabsProps) {
   return (
     <Tab.Navigator
       screenOptions={{
@@ -85,6 +92,21 @@ function MainTabs() {
           tabBarIcon: ({ focused }) => <TabIcon emoji="🏆" active={focused} />,
         }}
       />
+      <Tab.Screen
+        name="Account"
+        options={{
+          tabBarLabel: '내 계정',
+          tabBarIcon: ({ focused }) => <TabIcon emoji="👤" active={focused} />,
+        }}
+      >
+        {() => (
+          <AccountScreen
+            user={user}
+            onAuthSuccess={onAuthSuccess}
+            onSignOut={onSignOut}
+          />
+        )}
+      </Tab.Screen>
     </Tab.Navigator>
   );
 }
@@ -92,12 +114,20 @@ function MainTabs() {
 export default function App() {
   const [ready, setReady] = useState(false);
   const [initialRoute, setInitialRoute] = useState<'Diagnostic' | 'MainTabs'>('MainTabs');
+  const [user, setUser] = useState<{ id: string; email: string } | null>(null);
 
   useEffect(() => {
     loadStore().finally(() => {
       const store = getStore();
       setInitialRoute(store.diagnosticDone ? 'MainTabs' : 'Diagnostic');
-      setReady(true);
+
+      initAuth((authUser) => {
+        setUser(authUser);
+        setReady(true);
+        if (authUser) {
+          loadFromCloud();
+        }
+      });
     });
   }, []);
 
@@ -110,6 +140,14 @@ export default function App() {
     );
   }
 
+  const handleAuthSuccess = () => {
+    // user state will be updated via initAuth listener
+  };
+
+  const handleSignOut = () => {
+    setUser(null);
+  };
+
   return (
     <SafeAreaProvider>
       <NavigationContainer>
@@ -118,7 +156,15 @@ export default function App() {
           screenOptions={{ headerShown: false }}
         >
           <RootStack.Screen name="Diagnostic" component={DiagnosticScreen} />
-          <RootStack.Screen name="MainTabs" component={MainTabs} />
+          <RootStack.Screen name="MainTabs">
+            {() => (
+              <MainTabs
+                user={user}
+                onAuthSuccess={handleAuthSuccess}
+                onSignOut={handleSignOut}
+              />
+            )}
+          </RootStack.Screen>
         </RootStack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>

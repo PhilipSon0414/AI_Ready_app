@@ -1,5 +1,6 @@
 import { Platform } from 'react-native';
 import { UNITS, Question } from '../data/questions';
+import { supabase } from '../lib/supabase';
 
 export type AnswerRecord = {
   questionId: string;
@@ -45,6 +46,11 @@ type Store = {
 
 const STORAGE_KEY = 'aiready_store_v2';
 
+// Module-level auth state
+let currentUserId: string | null = null;
+let currentUserEmail: string | null = null;
+let syncTimer: ReturnType<typeof setTimeout> | null = null;
+
 let store: Store = {
   answers: [],
   unitProgress: {},
@@ -79,6 +85,114 @@ export async function loadStore(): Promise<void> {
   } catch {
     initUnitProgress();
   }
+}
+
+// ─── Cloud Sync ────────────────────────────────────────────────
+
+async function syncToCloud(): Promise<void> {
+  if (!currentUserId) return;
+  try {
+    await supabase.from('user_data').upsert({
+      user_id: currentUserId,
+      data: store as any,
+      updated_at: new Date().toISOString(),
+    }, { onConflict: 'user_id' });
+  } catch {
+    // silently fail - localStorage is still updated
+  }
+}
+
+function debouncedSync() {
+  if (syncTimer) clearTimeout(syncTimer);
+  syncTimer = setTimeout(() => {
+    syncToCloud();
+  }, 2000);
+}
+
+export async function loadFromCloud(): Promise<void> {
+  if (!currentUserId) return;
+  try {
+    const { data, error } = await supabase
+      .from('user_data')
+      .select('data')
+      .eq('user_id', currentUserId)
+      .single();
+    if (!error && data?.data) {
+      store = { ...store, ...(data.data as any) };
+      initUnitProgress();
+      save();
+    }
+  } catch {
+    // silently fail
+  }
+}
+
+// ─── Auth ────────────────────────────────────────────────────────
+
+export async function signUp(email: string, password: string): Promise<{ error: string | null }> {
+  try {
+    const { error } = await supabase.auth.signUp({ email, password });
+    if (error) {
+      if (error.message.includes('already registered') || error.message.includes('already been registered')) {
+        return { error: '이미 사용 중인 이메일입니다' };
+      }
+      return { error: '이메일 또는 비밀번호가 잘못되었습니다' };
+    }
+    return { error: null };
+  } catch {
+    return { error: '네트워크 오류가 발생했습니다' };
+  }
+}
+
+export async function signIn(email: string, password: string): Promise<{ error: string | null }> {
+  try {
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      return { error: '이메일 또는 비밀번호가 잘못되었습니다' };
+    }
+    return { error: null };
+  } catch {
+    return { error: '네트워크 오류가 발생했습니다' };
+  }
+}
+
+export async function signOut(): Promise<void> {
+  try {
+    await supabase.auth.signOut();
+  } catch {}
+  currentUserId = null;
+  currentUserEmail = null;
+}
+
+export function getCurrentUser(): { id: string; email: string } | null {
+  if (!currentUserId || !currentUserEmail) return null;
+  return { id: currentUserId, email: currentUserEmail };
+}
+
+export function initAuth(onAuthChange: (user: { id: string; email: string } | null) => void): void {
+  // Check existing session
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    if (session?.user) {
+      currentUserId = session.user.id;
+      currentUserEmail = session.user.email ?? '';
+      onAuthChange({ id: currentUserId, email: currentUserEmail });
+    } else {
+      onAuthChange(null);
+    }
+  });
+
+  // Listen to auth state changes
+  supabase.auth.onAuthStateChange((_event, session) => {
+    if (session?.user) {
+      currentUserId = session.user.id;
+      currentUserEmail = session.user.email ?? '';
+      onAuthChange({ id: currentUserId, email: currentUserEmail });
+    } else {
+      currentUserId = null;
+      currentUserEmail = null;
+      onAuthChange(null);
+    }
+  });
 }
 
 function initUnitProgress() {
@@ -123,12 +237,14 @@ export function completeDiagnostic(level: number) {
     store.unlockedLevels.push(l);
   }
   save();
+  debouncedSync();
 }
 
 export function addXP(amount: number): BadgeId[] {
   store.xp += amount;
   const newBadges = checkBadgeAwards();
   save();
+  debouncedSync();
   return newBadges;
 }
 
@@ -161,6 +277,7 @@ export function awardBadge(badgeId: BadgeId): boolean {
   if (store.badges.includes(badgeId)) return false;
   store.badges.push(badgeId);
   save();
+  debouncedSync();
   return true;
 }
 
@@ -179,6 +296,7 @@ export function checkLevelUnlock(levelId: number): boolean {
       checkBadgeAwards();
     }
     save();
+    debouncedSync();
     return true;
   }
   return false;
@@ -238,6 +356,7 @@ export function recordAnswer(q: Question, selectedIndex: number): boolean {
   updateStreak();
   checkBadgeAwards();
   save();
+  debouncedSync();
   return correct;
 }
 
@@ -266,6 +385,7 @@ export function completeUnit(unitId: string, correctCount: number, totalCount: n
   });
 
   save();
+  debouncedSync();
   return newBadges;
 }
 
@@ -276,6 +396,7 @@ export function getClozeLevel(questionId: string): number {
 export function incrementClozeLevel(questionId: string): void {
   store.clozeLevel[questionId] = (store.clozeLevel[questionId] ?? 0) + 1;
   save();
+  debouncedSync();
 }
 
 export function getClozeMastery(unitId: string): { mastered: number; total: number } {
@@ -338,4 +459,5 @@ export function resetUnit(unitId: string) {
     total: store.unitProgress[unitId]?.total ?? 0,
   };
   save();
+  debouncedSync();
 }
