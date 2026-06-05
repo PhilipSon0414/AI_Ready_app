@@ -1,0 +1,13 @@
+{
+  "name": "AI Ready - AI 학습 플랫폼",
+  "short_name": "AI Ready",
+  "description": "AI 역량을 키우는 스마트 학습 앱",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F5F7FA",
+  "theme_color": "#6C63FF",
+  "icons": [
+    { "src": "/favicon.ico", "sizes": "64x64", "type": "image/x-icon" }
+  ]
+}

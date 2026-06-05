@@ -67,7 +67,7 @@ export default function AuthScreen({ mode, onLoginSuccess, onSignupComplete, onB
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView contentContainerStyle={styles.inner} keyboardShouldPersistTaps="handled">
         {onBack && (
@@ -87,7 +87,10 @@ export default function AuthScreen({ mode, onLoginSuccess, onSignupComplete, onB
             value={email}
             onChangeText={setEmail}
             autoCapitalize="none"
+            autoCorrect={false}
             keyboardType="email-address"
+            returnKeyType="next"
+            textContentType="emailAddress"
             placeholder="example@email.com"
             placeholderTextColor="#B0B0B0"
           />
@@ -98,6 +101,8 @@ export default function AuthScreen({ mode, onLoginSuccess, onSignupComplete, onB
             value={password}
             onChangeText={setPassword}
             secureTextEntry
+            textContentType="password"
+            returnKeyType={mode === 'signup' ? 'next' : 'done'}
             placeholder="6자 이상 입력"
             placeholderTextColor="#B0B0B0"
           />
@@ -159,7 +164,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 12,
     paddingHorizontal: 16,
-    paddingVertical: 14,
+    paddingVertical: 15,
+    minHeight: 48,
     fontSize: 15,
     color: '#1A1A2E',
     marginBottom: 16,

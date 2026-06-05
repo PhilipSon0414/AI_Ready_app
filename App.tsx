@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, ActivityIndicator, StyleSheet, Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -58,8 +58,8 @@ function MainTabs({ user, onAuthSuccess, onSignOut }: MainTabsProps) {
           backgroundColor: '#fff',
           borderTopWidth: 1,
           borderTopColor: '#E8ECF0',
-          paddingBottom: 4,
-          height: 60,
+          paddingBottom: Platform.OS === 'ios' ? 20 : 4,
+          height: Platform.OS === 'ios' ? 80 : 60,
         },
         tabBarLabelStyle: { fontSize: 11, fontWeight: '600' },
       }}

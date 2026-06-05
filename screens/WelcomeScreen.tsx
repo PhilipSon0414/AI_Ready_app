@@ -108,6 +108,6 @@ const styles = StyleSheet.create({
     borderColor: '#6C63FF',
   },
   secondaryBtnText: { color: '#6C63FF', fontSize: 16, fontWeight: '700' },
-  textBtn: { marginTop: 20 },
+  textBtn: { marginTop: 20, paddingVertical: 12, paddingHorizontal: 16, minHeight: 44 },
   textBtnText: { color: '#9E9E9E', fontSize: 14, textDecorationLine: 'underline' },
 });
