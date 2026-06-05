@@ -7,6 +7,10 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { loadStore, getStore, initAuth, loadFromCloud } from './store/useAppStore';
 import DiagnosticScreen from './screens/DiagnosticScreen';
+import DiagnosticIntroScreen from './screens/DiagnosticIntroScreen';
+import WelcomeScreen from './screens/WelcomeScreen';
+import SignupCompleteScreen from './screens/SignupCompleteScreen';
+import AuthScreen from './screens/AuthScreen';
 import HomeScreen from './screens/HomeScreen';
 import QuizScreen from './screens/QuizScreen';
 import StudyModeScreen from './screens/StudyModeScreen';
@@ -113,20 +117,32 @@ function MainTabs({ user, onAuthSuccess, onSignOut }: MainTabsProps) {
 
 export default function App() {
   const [ready, setReady] = useState(false);
-  const [initialRoute, setInitialRoute] = useState<'Diagnostic' | 'MainTabs'>('MainTabs');
+  const [initialRoute, setInitialRoute] = useState<'Welcome' | 'MainTabs'>('Welcome');
   const [user, setUser] = useState<{ id: string; email: string } | null>(null);
+  // pending signup email to pass to SignupComplete screen
+  const [pendingSignupEmail, setPendingSignupEmail] = useState<string>('');
 
   useEffect(() => {
     loadStore().finally(() => {
-      const store = getStore();
-      setInitialRoute(store.diagnosticDone ? 'MainTabs' : 'Diagnostic');
-
-      initAuth((authUser) => {
+      initAuth(async (authUser) => {
         setUser(authUser);
-        setReady(true);
+
         if (authUser) {
-          loadFromCloud();
+          // Show loading state then determine route after cloud load
+          try {
+            await loadFromCloud();
+          } catch (_) {}
+          const store = getStore();
+          if (store.diagnosticDone && store.answers.length > 0) {
+            setInitialRoute('MainTabs');
+          } else {
+            setInitialRoute('Welcome');
+          }
+        } else {
+          setInitialRoute('Welcome');
         }
+
+        setReady(true);
       });
     });
   }, []);
@@ -140,12 +156,12 @@ export default function App() {
     );
   }
 
-  const handleAuthSuccess = () => {
-    // user state will be updated via initAuth listener
-  };
-
   const handleSignOut = () => {
     setUser(null);
+  };
+
+  const handleAuthSuccess = () => {
+    // user state will be updated via initAuth listener
   };
 
   return (
@@ -155,7 +171,60 @@ export default function App() {
           initialRouteName={initialRoute}
           screenOptions={{ headerShown: false }}
         >
+          {/* Welcome screen wraps auth forms via modal-like inline navigation */}
+          <RootStack.Screen name="Welcome">
+            {({ navigation }) => (
+              <WelcomeScreen
+                onLogin={() => navigation.navigate('Login')}
+                onSignup={() => navigation.navigate('Signup')}
+              />
+            )}
+          </RootStack.Screen>
+
+          <RootStack.Screen name="Login">
+            {({ navigation }) => (
+              <AuthScreen
+                mode="login"
+                onLoginSuccess={async () => {
+                  // After login, check cloud data
+                  try {
+                    await loadFromCloud();
+                  } catch (_) {}
+                  const store = getStore();
+                  if (store.diagnosticDone && store.answers.length > 0) {
+                    navigation.replace('MainTabs');
+                  } else {
+                    navigation.replace('DiagnosticIntro');
+                  }
+                }}
+                onSignupComplete={() => {}}
+                onBack={() => navigation.goBack()}
+              />
+            )}
+          </RootStack.Screen>
+
+          <RootStack.Screen name="Signup">
+            {({ navigation }) => (
+              <AuthScreen
+                mode="signup"
+                onLoginSuccess={() => {}}
+                onSignupComplete={(email) => {
+                  setPendingSignupEmail(email);
+                  navigation.replace('SignupComplete');
+                }}
+                onBack={() => navigation.goBack()}
+              />
+            )}
+          </RootStack.Screen>
+
+          <RootStack.Screen name="SignupComplete">
+            {() => <SignupCompleteScreen email={pendingSignupEmail} />}
+          </RootStack.Screen>
+
+          <RootStack.Screen name="DiagnosticIntro" component={DiagnosticIntroScreen} />
+
           <RootStack.Screen name="Diagnostic" component={DiagnosticScreen} />
+
           <RootStack.Screen name="MainTabs">
             {() => (
               <MainTabs

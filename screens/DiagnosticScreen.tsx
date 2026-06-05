@@ -13,10 +13,10 @@ import { DIAGNOSTIC_QUESTIONS } from '../data/questions';
 import { completeDiagnostic } from '../store/useAppStore';
 
 const LEVEL_INFO: Record<number, { name: string; icon: string; color: string; desc: string }> = {
-  1: { name: 'AI 입문',  icon: '🌱', color: '#4CAF50', desc: 'AI의 기초 개념부터 차근차근 학습을 시작합니다.' },
-  2: { name: 'AI 기초',  icon: '📘', color: '#2196F3', desc: '머신러닝과 딥러닝의 핵심 원리를 학습합니다.' },
-  3: { name: 'AI 응용',  icon: '⚡', color: '#FF9800', desc: '생성형 AI와 파인튜닝 기술을 심화 학습합니다.' },
-  4: { name: 'AI 전문가', icon: '🔥', color: '#9C27B0', desc: '최신 AI 아키텍처와 고급 기술을 마스터합니다.' },
+  1: { name: 'AI 입문',  icon: '🌱', color: '#4CAF50', desc: 'AI의 기본 개념에 대한 이해가 시작 단계입니다. 인공지능이 무엇인지, 어떻게 활용되는지 기초부터 차근차근 배워보세요.' },
+  2: { name: 'AI 기초',  icon: '📘', color: '#2196F3', desc: 'AI의 기본 개념은 이해하고 있지만 심화 내용이 필요합니다. 머신러닝, 딥러닝 등 핵심 기술을 학습해 보세요.' },
+  3: { name: 'AI 응용',  icon: '⚡', color: '#FF9800', desc: 'AI에 대한 상당한 지식을 갖추고 있습니다. 실무 응용과 최신 트렌드를 중심으로 실력을 더욱 높여보세요.' },
+  4: { name: 'AI 전문가', icon: '🔥', color: '#9C27B0', desc: 'AI 분야의 높은 전문성을 보유하고 있습니다. 고급 개념과 최신 연구 동향으로 전문가 수준을 완성하세요.' },
 };
 
 function scoreToLevel(score: number): number {
