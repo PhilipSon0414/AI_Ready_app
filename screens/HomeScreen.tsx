@@ -122,7 +122,7 @@ export default function HomeScreen() {
                       unitDone && styles.unitRowDone,
                     ]}
                     onPress={() => {
-                      if (!locked) nav.navigate('Quiz', { unitId: unit.id });
+                      if (!locked) nav.navigate('StudyMode', { unitId: unit.id });
                     }}
                     disabled={locked}
                   >

@@ -40,6 +40,7 @@ type Store = {
   diagnosticLevel: number | null;
   streak: number;
   lastStudyDate: string | null;
+  clozeLevel: { [questionId: string]: number };
 };
 
 const STORAGE_KEY = 'aiready_store_v2';
@@ -54,6 +55,7 @@ let store: Store = {
   diagnosticLevel: null,
   streak: 0,
   lastStudyDate: null,
+  clozeLevel: {},
 };
 
 function getStorage(): Storage | null {
@@ -265,6 +267,23 @@ export function completeUnit(unitId: string, correctCount: number, totalCount: n
 
   save();
   return newBadges;
+}
+
+export function getClozeLevel(questionId: string): number {
+  return store.clozeLevel[questionId] ?? 0;
+}
+
+export function incrementClozeLevel(questionId: string): void {
+  store.clozeLevel[questionId] = (store.clozeLevel[questionId] ?? 0) + 1;
+  save();
+}
+
+export function getClozeMastery(unitId: string): { mastered: number; total: number } {
+  const unit = UNITS.find((u) => u.id === unitId);
+  if (!unit) return { mastered: 0, total: 0 };
+  const questionsWithCloze = unit.questions.filter((q) => q.cloze);
+  const mastered = questionsWithCloze.filter((q) => (store.clozeLevel[q.id] ?? 0) >= 2).length;
+  return { mastered, total: questionsWithCloze.length };
 }
 
 export function getStore(): Store {

@@ -9,6 +9,9 @@ import { loadStore, getStore } from './store/useAppStore';
 import DiagnosticScreen from './screens/DiagnosticScreen';
 import HomeScreen from './screens/HomeScreen';
 import QuizScreen from './screens/QuizScreen';
+import StudyModeScreen from './screens/StudyModeScreen';
+import FlashcardScreen from './screens/FlashcardScreen';
+import ClozeScreen from './screens/ClozeScreen';
 import ReviewScreen from './screens/ReviewScreen';
 import DashScreen from './screens/DashScreen';
 import BadgesScreen from './screens/BadgesScreen';
@@ -25,7 +28,10 @@ function HomeStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="HomeMain" component={HomeScreen} />
+      <Stack.Screen name="StudyMode" component={StudyModeScreen} />
       <Stack.Screen name="Quiz" component={QuizScreen} />
+      <Stack.Screen name="Flashcard" component={FlashcardScreen} />
+      <Stack.Screen name="Cloze" component={ClozeScreen} />
     </Stack.Navigator>
   );
 }

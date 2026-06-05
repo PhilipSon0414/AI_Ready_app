@@ -7,6 +7,10 @@ export type Question = {
   answer: number; // 0-indexed
   explanation: string;
   level: 1 | 2 | 3 | 4;
+  cloze?: {
+    sentence: string;
+    answers: string[];
+  };
 };
 
 export type Unit = {
@@ -33,6 +37,10 @@ const u1_questions: Question[] = [
     ],
     answer: 1,
     explanation: 'AI는 사람의 지능적 행동(학습, 추론, 문제 해결)을 컴퓨터 시스템이 수행할 수 있도록 하는 기술입니다.',
+    cloze: {
+      sentence: '인공지능은 사람의 ___ 행동을 컴퓨터 시스템이 수행할 수 있도록 하는 기술이다.',
+      answers: ['지능적'],
+    },
   },
   {
     id: 'u1q2', unit: 'u1', topic: 'AI 기초', level: 1,
@@ -45,6 +53,10 @@ const u1_questions: Question[] = [
     ],
     answer: 1,
     explanation: '머신러닝에서 학습은 데이터로부터 패턴을 자동으로 발견하고, 이를 기반으로 예측/분류 성능을 높이는 과정입니다.',
+    cloze: {
+      sentence: '머신러닝에서 학습은 ___로부터 패턴을 자동으로 발견하여 예측 성능을 높이는 과정이다.',
+      answers: ['데이터'],
+    },
   },
   {
     id: 'u1q3', unit: 'u1', topic: 'AI 기초', level: 1,
@@ -57,6 +69,10 @@ const u1_questions: Question[] = [
     ],
     answer: 0,
     explanation: '스팸 분류는 "스팸/정상"이라는 레이블(정답)이 있는 데이터로 학습하는 지도학습의 대표적인 예입니다.',
+    cloze: {
+      sentence: '지도학습은 입력 데이터와 ___ 쌍으로 학습하며, 스팸 분류가 대표적인 예이다.',
+      answers: ['정답 레이블'],
+    },
   },
   {
     id: 'u1q4', unit: 'u1', topic: 'AI 기초', level: 1,
@@ -69,6 +85,10 @@ const u1_questions: Question[] = [
     ],
     answer: 2,
     explanation: '비지도학습은 정답 레이블 없이 데이터 자체의 패턴, 군집, 분포 등을 스스로 발견하는 학습 방식입니다.',
+    cloze: {
+      sentence: '비지도학습은 정답 레이블 없이 데이터의 숨겨진 ___ 을 스스로 발견하는 학습 방식이다.',
+      answers: ['패턴'],
+    },
   },
 ];
 
@@ -84,6 +104,10 @@ const u2_questions: Question[] = [
     ],
     answer: 1,
     explanation: '테스트 데이터는 모델이 학습 중에 보지 못한 데이터로, 실제 환경에서의 성능(일반화 능력)을 공정하게 평가합니다.',
+    cloze: {
+      sentence: '테스트 데이터는 모델의 ___ 능력을 공정하게 평가하기 위해 학습에 사용하지 않는 데이터이다.',
+      answers: ['일반화'],
+    },
   },
   {
     id: 'u2q2', unit: 'u2', topic: '데이터', level: 1,
@@ -96,6 +120,10 @@ const u2_questions: Question[] = [
     ],
     answer: 0,
     explanation: '과적합은 모델이 학습 데이터의 노이즈까지 외워버려 새로운 데이터에서 일반화 성능이 떨어지는 현상입니다.',
+    cloze: {
+      sentence: '과적합은 모델이 학습 데이터의 ___ 까지 외워 새로운 데이터에서 성능이 떨어지는 현상이다.',
+      answers: ['노이즈'],
+    },
   },
   {
     id: 'u2q3', unit: 'u2', topic: '데이터', level: 1,
@@ -108,6 +136,10 @@ const u2_questions: Question[] = [
     ],
     answer: 1,
     explanation: '특징(Feature)은 모델에 입력되는 변수로, 예측에 사용되는 데이터의 속성입니다. 예: 집값 예측에서 면적·위치 등.',
+    cloze: {
+      sentence: '특징(Feature)은 모델에 입력되는 ___ 변수로, 집값 예측에서 면적·위치 등이 해당된다.',
+      answers: ['입력'],
+    },
   },
   {
     id: 'u2q4', unit: 'u2', topic: '데이터', level: 1,
@@ -120,6 +152,10 @@ const u2_questions: Question[] = [
     ],
     answer: 3,
     explanation: '결측값 처리 방법에는 평균/중간값 대체, 행 삭제, 모델 기반 대체 등이 있습니다. 데이터를 단순 복사하는 것은 결측값 처리 방법이 아닙니다.',
+    cloze: {
+      sentence: '결측값 처리 방법에는 ___ 대체, 중간값 대체, 해당 행 삭제 등이 있다.',
+      answers: ['평균값'],
+    },
   },
 ];
 
@@ -138,6 +174,10 @@ const u3_questions: Question[] = [
     ],
     answer: 1,
     explanation: '딥러닝의 핵심 강점은 다층 신경망을 통해 원본 데이터에서 유용한 특징을 자동으로 추출한다는 점입니다.',
+    cloze: {
+      sentence: '딥러닝은 ___ 을 통해 데이터에서 유용한 특징을 자동으로 추출하는 것이 핵심 강점이다.',
+      answers: ['다층 신경망'],
+    },
   },
   {
     id: 'u3q2', unit: 'u3', topic: '신경망', level: 2,
@@ -150,6 +190,10 @@ const u3_questions: Question[] = [
     ],
     answer: 1,
     explanation: '활성화 함수(ReLU, Sigmoid 등)는 신경망에 비선형성을 부여하여, 선형 변환만으로는 표현할 수 없는 복잡한 패턴을 학습하게 해줍니다.',
+    cloze: {
+      sentence: '활성화 함수(ReLU, Sigmoid 등)는 신경망에 ___ 을 도입하여 복잡한 패턴 학습을 가능하게 한다.',
+      answers: ['비선형성'],
+    },
   },
   {
     id: 'u3q3', unit: 'u3', topic: '신경망', level: 2,
@@ -162,6 +206,10 @@ const u3_questions: Question[] = [
     ],
     answer: 1,
     explanation: '역전파는 출력층에서 입력층 방향으로 손실 함수의 편미분(기울기)을 계산하여 각 가중치를 업데이트하는 핵심 학습 알고리즘입니다.',
+    cloze: {
+      sentence: '역전파는 손실 함수의 ___ 를 계산하여 각 가중치를 업데이트하는 핵심 학습 알고리즘이다.',
+      answers: ['기울기'],
+    },
   },
   {
     id: 'u3q4', unit: 'u3', topic: '신경망', level: 2,
@@ -174,6 +222,10 @@ const u3_questions: Question[] = [
     ],
     answer: 1,
     explanation: 'CNN은 필터(커널)를 통해 이미지의 공간 구조를 보존하면서 에지, 텍스처, 형태 등의 지역적 특징을 계층적으로 추출합니다.',
+    cloze: {
+      sentence: 'CNN은 필터를 통해 이미지의 ___ 특징을 계층적으로 추출하여 이미지 처리에 적합하다.',
+      answers: ['공간적'],
+    },
   },
 ];
 
@@ -189,6 +241,10 @@ const u4_questions: Question[] = [
     ],
     answer: 2,
     explanation: 'Transformer는 Self-Attention 메커니즘을 사용해 시퀀스 내 모든 위치 간의 관계를 병렬로 처리합니다.',
+    cloze: {
+      sentence: 'Transformer는 ___ 메커니즘을 사용해 시퀀스 내 모든 위치 간 관계를 병렬로 처리한다.',
+      answers: ['Self-Attention'],
+    },
   },
   {
     id: 'u4q2', unit: 'u4', topic: 'LLM', level: 2,
@@ -201,6 +257,10 @@ const u4_questions: Question[] = [
     ],
     answer: 0,
     explanation: 'GPT는 자기회귀(autoregressive) 방식으로, 이전 토큰들을 바탕으로 다음 토큰의 확률을 예측해 텍스트를 순차적으로 생성합니다.',
+    cloze: {
+      sentence: 'GPT는 ___ 방식으로 이전 토큰을 바탕으로 다음 토큰의 확률을 예측해 텍스트를 생성한다.',
+      answers: ['자기회귀'],
+    },
   },
   {
     id: 'u4q3', unit: 'u4', topic: '프롬프트', level: 2,
@@ -213,6 +273,10 @@ const u4_questions: Question[] = [
     ],
     answer: 1,
     explanation: 'Few-shot prompting은 프롬프트에 몇 가지 입출력 예시를 포함해 모델이 원하는 패턴으로 응답하도록 유도하는 기법입니다.',
+    cloze: {
+      sentence: 'Few-shot prompting은 프롬프트에 몇 가지 ___ 를 포함해 모델이 원하는 패턴으로 응답하도록 유도한다.',
+      answers: ['입출력 예시'],
+    },
   },
   {
     id: 'u4q4', unit: 'u4', topic: 'LLM', level: 2,
@@ -225,6 +289,10 @@ const u4_questions: Question[] = [
     ],
     answer: 1,
     explanation: 'RAG는 외부 데이터베이스에서 관련 정보를 검색해 컨텍스트로 활용함으로써 LLM의 응답 정확도와 최신성을 높입니다.',
+    cloze: {
+      sentence: 'RAG는 외부 데이터베이스에서 관련 정보를 검색해 LLM의 응답 ___ 와 최신성을 높인다.',
+      answers: ['정확도'],
+    },
   },
 ];
 
@@ -240,6 +308,10 @@ const u5_questions: Question[] = [
     ],
     answer: 1,
     explanation: '할루시네이션은 AI가 실제로는 존재하지 않거나 잘못된 정보를 사실처럼 생성하는 현상으로, LLM의 주요 신뢰성 문제 중 하나입니다.',
+    cloze: {
+      sentence: '할루시네이션은 AI가 잘못된 정보를 ___ 처럼 자신있게 생성하는 현상으로 LLM의 주요 신뢰성 문제이다.',
+      answers: ['사실'],
+    },
   },
   {
     id: 'u5q2', unit: 'u5', topic: 'AI 안전', level: 2,
@@ -252,6 +324,10 @@ const u5_questions: Question[] = [
     ],
     answer: 1,
     explanation: 'RLHF는 인간의 피드백을 보상 신호로 활용해 모델의 출력을 인간의 의도·가치에 맞게 조정하는 AI 정렬 기법입니다.',
+    cloze: {
+      sentence: 'RLHF는 인간의 ___ 을 보상 신호로 활용해 AI 출력을 인간의 가치에 맞게 정렬하는 기법이다.',
+      answers: ['피드백'],
+    },
   },
   {
     id: 'u5q3', unit: 'u5', topic: 'AI 윤리', level: 2,
@@ -264,6 +340,10 @@ const u5_questions: Question[] = [
     ],
     answer: 1,
     explanation: 'AI 편향은 주로 학습 데이터에 내재된 사회적 편견, 특정 집단 과소 대표, 데이터 불균형 등에서 비롯됩니다.',
+    cloze: {
+      sentence: 'AI 편향은 주로 학습 데이터에 내재된 ___ 이나 데이터 불균형에서 비롯된다.',
+      answers: ['사회적 편견'],
+    },
   },
 ];
 
@@ -282,6 +362,10 @@ const u6_questions: Question[] = [
     ],
     answer: 1,
     explanation: 'Stable Diffusion은 VAE로 압축된 잠재 공간(Latent Space)에서 확산 과정을 수행하는 Latent Diffusion Model입니다.',
+    cloze: {
+      sentence: 'Stable Diffusion은 ___ 에서 확산 과정을 수행하는 Latent Diffusion Model이다.',
+      answers: ['잠재 공간'],
+    },
   },
   {
     id: 'u6q2', unit: 'u6', topic: '생성형 AI', level: 3,
@@ -294,6 +378,10 @@ const u6_questions: Question[] = [
     ],
     answer: 1,
     explanation: 'GAN은 생성자(진짜 같은 가짜 생성)와 판별자(진짜/가짜 구분) 두 네트워크가 서로 경쟁하며 발전하는 구조입니다.',
+    cloze: {
+      sentence: 'GAN은 ___ 와 판별자 두 네트워크가 서로 경쟁하며 발전하는 구조이다.',
+      answers: ['생성자'],
+    },
   },
   {
     id: 'u6q3', unit: 'u6', topic: '생성형 AI', level: 3,
@@ -306,6 +394,10 @@ const u6_questions: Question[] = [
     ],
     answer: 1,
     explanation: 'CFG(Classifier-Free Guidance)는 조건부/무조건부 예측의 차이를 증폭시켜 텍스트 프롬프트에 얼마나 충실하게 이미지를 생성할지 조절합니다.',
+    cloze: {
+      sentence: 'CFG는 텍스트 ___ 에 얼마나 강하게 따를지 조절하여 이미지 생성 품질을 제어하는 기술이다.',
+      answers: ['프롬프트'],
+    },
   },
   {
     id: 'u6q4', unit: 'u6', topic: '생성형 AI', level: 3,
@@ -318,6 +410,10 @@ const u6_questions: Question[] = [
     ],
     answer: 1,
     explanation: 'GitHub Copilot은 OpenAI의 Codex(GPT 기반 코드 특화 모델)를 기반으로 코드 자동완성·생성 기능을 제공합니다.',
+    cloze: {
+      sentence: 'GitHub Copilot은 GPT 기반 ___ 모델을 활용하여 코드 자동완성 기능을 제공한다.',
+      answers: ['Codex'],
+    },
   },
 ];
 
@@ -333,6 +429,10 @@ const u7_questions: Question[] = [
     ],
     answer: 1,
     explanation: '파인튜닝은 대규모로 사전 학습된 모델(예: GPT)을 특정 도메인·태스크 데이터로 추가 학습시켜 성능을 특화하는 기법입니다.',
+    cloze: {
+      sentence: '파인튜닝은 ___ 모델을 특정 도메인 데이터로 추가 학습시켜 성능을 특화하는 기법이다.',
+      answers: ['사전 학습된'],
+    },
   },
   {
     id: 'u7q2', unit: 'u7', topic: '파인튜닝', level: 3,
@@ -345,6 +445,10 @@ const u7_questions: Question[] = [
     ],
     answer: 1,
     explanation: 'LoRA는 기존 가중치를 고정한 채 저랭크(Low-Rank) 행렬 두 개를 삽입해 파라미터를 크게 줄이면서 효과적으로 파인튜닝하는 기법입니다.',
+    cloze: {
+      sentence: 'LoRA는 원본 가중치를 ___ 하고 저랭크 행렬만 학습하여 효율적으로 파인튜닝하는 기법이다.',
+      answers: ['고정'],
+    },
   },
   {
     id: 'u7q3', unit: 'u7', topic: 'MLOps', level: 3,
@@ -357,6 +461,10 @@ const u7_questions: Question[] = [
     ],
     answer: 1,
     explanation: 'MLOps는 ML 모델의 개발(Dev)과 운영(Ops)을 통합하여 모델 배포·모니터링·재학습 파이프라인을 자동화·표준화하는 실천 방법론입니다.',
+    cloze: {
+      sentence: 'MLOps는 ML 모델의 개발과 운영을 통합하여 배포·모니터링 파이프라인을 ___ 하는 방법론이다.',
+      answers: ['자동화'],
+    },
   },
   {
     id: 'u7q4', unit: 'u7', topic: 'MLOps', level: 3,
@@ -369,6 +477,10 @@ const u7_questions: Question[] = [
     ],
     answer: 1,
     explanation: '모델 드리프트는 배포 후 시간이 지나면서 실제 입력 데이터의 분포가 학습 데이터와 달라져 모델 성능이 저하되는 현상입니다.',
+    cloze: {
+      sentence: '모델 드리프트는 배포 후 실제 데이터의 ___ 가 변해 모델 성능이 저하되는 현상이다.',
+      answers: ['분포'],
+    },
   },
 ];
 
@@ -387,6 +499,10 @@ const u8_questions: Question[] = [
     ],
     answer: 1,
     explanation: 'MoE는 게이팅 네트워크가 입력마다 적절한 전문가(Expert) 일부만 활성화해 전체 파라미터 수 대비 연산량을 크게 줄입니다.',
+    cloze: {
+      sentence: 'MoE는 게이팅 네트워크가 입력마다 일부 ___ 만 선택적으로 활성화하여 연산 효율을 높인다.',
+      answers: ['전문가'],
+    },
   },
   {
     id: 'u8q2', unit: 'u8', topic: '고급 아키텍처', level: 4,
@@ -399,6 +515,10 @@ const u8_questions: Question[] = [
     ],
     answer: 1,
     explanation: 'Flash Attention은 타일링(Tiling) 기법으로 HBM(고대역폭 메모리) 접근을 최소화해 Attention의 메모리 효율과 연산 속도를 크게 개선합니다.',
+    cloze: {
+      sentence: 'Flash Attention은 ___ 기법으로 HBM 접근을 최소화해 Attention 연산의 메모리 효율을 개선한다.',
+      answers: ['타일링'],
+    },
   },
   {
     id: 'u8q3', unit: 'u8', topic: '강화학습', level: 4,
@@ -411,6 +531,10 @@ const u8_questions: Question[] = [
     ],
     answer: 1,
     explanation: 'PPO는 클리핑된 대리 목적 함수(Clipped Surrogate Objective)로 정책 업데이트 폭을 제한해 학습 안정성을 확보한 RLHF의 핵심 알고리즘입니다.',
+    cloze: {
+      sentence: 'PPO는 ___ 으로 정책 업데이트 폭을 제한하여 학습 안정성을 확보하는 알고리즘이다.',
+      answers: ['클리핑'],
+    },
   },
   {
     id: 'u8q4', unit: 'u8', topic: '고급 아키텍처', level: 4,
@@ -423,6 +547,10 @@ const u8_questions: Question[] = [
     ],
     answer: 1,
     explanation: '양자화는 float32 가중치를 int8/int4 등으로 변환해 메모리 사용량과 추론 속도를 크게 개선하지만 약간의 정확도 저하가 발생합니다.',
+    cloze: {
+      sentence: '양자화는 파라미터를 낮은 ___ 로 표현해 메모리와 속도를 개선하되 약간의 정확도 손실이 발생한다.',
+      answers: ['비트'],
+    },
   },
 ];
 
@@ -438,6 +566,10 @@ const u9_questions: Question[] = [
     ],
     answer: 1,
     explanation: 'AI 에이전트는 단순 텍스트 생성을 넘어 도구(검색, 코드 실행 등)를 사용하고, 계획을 세우며, 다단계 추론으로 복잡한 목표를 자율 수행합니다.',
+    cloze: {
+      sentence: 'AI 에이전트는 도구 사용과 ___ 추론으로 복잡한 목표를 자율적으로 달성하는 것이 특징이다.',
+      answers: ['다단계'],
+    },
   },
   {
     id: 'u9q2', unit: 'u9', topic: 'AI 에이전트', level: 4,
@@ -450,6 +582,10 @@ const u9_questions: Question[] = [
     ],
     answer: 1,
     explanation: 'ReAct는 LLM이 Thought(추론)→Action(도구 실행)→Observation(결과 관찰) 루프를 반복하며 단계적으로 복잡한 문제를 해결하는 프레임워크입니다.',
+    cloze: {
+      sentence: 'ReAct는 추론 → 행동 → ___ 루프를 반복하며 단계적으로 문제를 해결하는 에이전트 프레임워크이다.',
+      answers: ['관찰'],
+    },
   },
   {
     id: 'u9q3', unit: 'u9', topic: '멀티모달', level: 4,
@@ -462,6 +598,10 @@ const u9_questions: Question[] = [
     ],
     answer: 1,
     explanation: 'VLM은 비전 인코더(ViT 등)로 이미지 특징을 추출하고, 프로젝션 레이어를 통해 언어 모델의 토큰 임베딩 공간에 정렬하여 멀티모달 이해를 구현합니다.',
+    cloze: {
+      sentence: 'VLM은 이미지 인코더로 시각 특징을 추출하고 ___ 레이어를 통해 언어 모델 임베딩 공간에 정렬한다.',
+      answers: ['프로젝션'],
+    },
   },
   {
     id: 'u9q4', unit: 'u9', topic: '컨텍스트 윈도우', level: 4,
@@ -474,6 +614,10 @@ const u9_questions: Question[] = [
     ],
     answer: 1,
     explanation: '표준 Self-Attention은 O(n²) 복잡도를 가져 컨텍스트 길이 n이 늘어날수록 메모리와 연산량이 제곱으로 증가합니다. 이를 해결하기 위해 Flash Attention, Sparse Attention 등이 연구됩니다.',
+    cloze: {
+      sentence: '표준 Self-Attention은 O(n²) 복잡도를 가져 컨텍스트 길이가 늘어날수록 ___ 이 폭증하는 문제가 있다.',
+      answers: ['메모리'],
+    },
   },
 ];
 
