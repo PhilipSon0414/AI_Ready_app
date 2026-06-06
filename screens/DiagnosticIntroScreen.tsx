@@ -22,20 +22,21 @@ export default function DiagnosticIntroScreen() {
 
       <ScrollView contentContainerStyle={styles.inner} showsVerticalScrollIndicator={false}>
         <Text style={styles.icon}>🎯</Text>
-        <Text style={styles.title}>AI 수준 진단</Text>
+        <Text style={styles.title}>AI · Python 수준 진단</Text>
         <Text style={styles.desc}>
-          진단 퀴즈로 나의 AI 지식{'\n'}수준을 확인해 보세요.
+          12문항으로 나의 현재 수준을 파악하고{'\n'}딱 맞는 레벨부터 학습을 시작해요!
         </Text>
 
         <View style={styles.card}>
           <Text style={styles.cardTitle}>── 진단 안내 ──</Text>
-          <Text style={styles.bullet}>• 총 8문항 (약 5분 소요)</Text>
-          <Text style={styles.bullet}>• 결과에 따라 학습 레벨이{'\n'}  자동으로 설정됩니다</Text>
-          <Text style={styles.bullet}>• 나중에 재진단도 가능합니다</Text>
+          <Text style={styles.bullet}>• 총 12문항 (약 5~8분 소요)</Text>
+          <Text style={styles.bullet}>• AI 기초부터 Python 코딩까지{'\n'}  난이도가 점점 올라갑니다</Text>
+          <Text style={styles.bullet}>• 결과에 따라 Lv.0~Lv.7 중{'\n'}  나의 레벨이 자동 설정됩니다</Text>
+          <Text style={styles.bullet}>• 모르는 문제는 과감히 넘어가도 됩니다</Text>
         </View>
 
         <Text style={styles.levelRange}>
-          레벨 1 (입문) ~ 레벨 4 (전문가){'\n'}중 나의 레벨을 찾아보세요!
+          🌿 Lv.0 완전 입문  →  🔥 Lv.7 코드 마스터{'\n'}8단계 중 나의 출발점을 찾아보세요!
         </Text>
 
         <TouchableOpacity style={styles.startBtn} onPress={() => nav.navigate('Diagnostic')}>

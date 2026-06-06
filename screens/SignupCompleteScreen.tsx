@@ -24,7 +24,7 @@ export default function SignupCompleteScreen({ email }: Props) {
           <Text style={styles.emailHighlight}>{email}</Text> 으로{'\n'}가입되었습니다.
         </Text>
         <Text style={styles.nextDesc}>
-          이제 AI 수준을{'\n'}진단해 볼까요?
+          이제 12문항으로 나의 AI · Python{'\n'}수준을 진단해 볼까요?{'\n'}결과에 따라 Lv.0~Lv.7 중{'\n'}딱 맞는 레벨이 배정됩니다.
         </Text>
         <TouchableOpacity style={styles.nextBtn} onPress={() => nav.navigate('DiagnosticIntro')}>
           <Text style={styles.nextBtnText}>다음 →</Text>

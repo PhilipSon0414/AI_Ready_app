@@ -26,16 +26,26 @@ export default function WelcomeScreen({ onLogin, onSignup }: Props) {
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>── 이런 분께 추천합니다 ──</Text>
-          <Text style={styles.bullet}>• AI를 처음 접하는 분</Text>
-          <Text style={styles.bullet}>• AI 개념을 체계적으로{'\n'}  정리하고 싶은 분</Text>
-          <Text style={styles.bullet}>• AI 활용 능력을 키우고{'\n'}  싶은 직장인/학생</Text>
+          <Text style={styles.bullet}>• 🌿 AI가 뭔지 전혀 모르는 분</Text>
+          <Text style={styles.bullet}>• 👂 AI 단어는 들어봤지만 내용은 모르는 분</Text>
+          <Text style={styles.bullet}>• 💻 Python을 처음 배워보고 싶은 분</Text>
+          <Text style={styles.bullet}>• 📊 데이터 분석·머신러닝에 도전하고 싶은 분</Text>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>── 8단계 학습 커리큘럼 ──</Text>
+          <Text style={styles.feature}>🌿 Lv.0 AI 완전 입문</Text>
+          <Text style={styles.feature}>👂 Lv.1 AI 용어 이해  →  📖 Lv.2 AI 개념</Text>
+          <Text style={styles.feature}>💻 Lv.3 Python 첫걸음  →  🐍 Lv.4 파이썬 기초</Text>
+          <Text style={styles.feature}>📊 Lv.5 데이터 분석  →  ⚙️ Lv.6 알고리즘</Text>
+          <Text style={styles.feature}>🔥 Lv.7 코드 마스터</Text>
         </View>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>── 학습 방법 ──</Text>
-          <Text style={styles.feature}>📊 수준 진단 → 맞춤 학습</Text>
-          <Text style={styles.feature}>🎯 객관식·플래시카드·빈칸</Text>
-          <Text style={styles.feature}>🏆 XP·배지·레벨업 시스템</Text>
+          <Text style={styles.feature}>🎯 12문항 수준 진단 → 맞춤 레벨 시작</Text>
+          <Text style={styles.feature}>📝 객관식  🃏 플래시카드  🔤 빈칸 채우기</Text>
+          <Text style={styles.feature}>🏆 XP · 배지 · 레벨 해제 시스템</Text>
         </View>
 
         <TouchableOpacity style={styles.primaryBtn} onPress={onSignup}>
