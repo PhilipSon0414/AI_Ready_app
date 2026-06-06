@@ -22,7 +22,11 @@
       "favicon": "./assets/favicon.png",
       "bundler": "metro",
       "themeColor": "#6C63FF",
-      "backgroundColor": "#F5F7FA"
+      "backgroundColor": "#F5F7FA",
+      "name": "AI Ready",
+      "shortName": "AI Ready",
+      "description": "AI 역량을 키우는 스마트 학습 앱",
+      "lang": "ko"
     }
   }
 }
