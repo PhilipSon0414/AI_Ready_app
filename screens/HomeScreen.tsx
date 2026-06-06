@@ -12,10 +12,14 @@ import { UNITS } from '../data/questions';
 import { getStore, getUnitProgress, getLevelProgress } from '../store/useAppStore';
 
 const LEVEL_CONFIG: Record<number, { name: string; icon: string; color: string; bgColor: string }> = {
-  1: { name: 'AI 입문',   icon: '🌱', color: '#4CAF50', bgColor: '#E8F5E9' },
-  2: { name: 'AI 기초',   icon: '📘', color: '#2196F3', bgColor: '#E3F2FD' },
-  3: { name: 'AI 응용',   icon: '⚡', color: '#FF9800', bgColor: '#FFF3E0' },
-  4: { name: 'AI 전문가', icon: '🔥', color: '#9C27B0', bgColor: '#F3E5F5' },
+  0: { name: 'AI 완전 입문',    icon: '🌿', color: '#78909C', bgColor: '#ECEFF1' },
+  1: { name: 'AI 이름만 들어봤어요', icon: '👂', color: '#66BB6A', bgColor: '#E8F5E9' },
+  2: { name: 'AI 개념 이해 중',  icon: '📖', color: '#42A5F5', bgColor: '#E3F2FD' },
+  3: { name: '코딩 첫걸음',     icon: '💻', color: '#AB47BC', bgColor: '#F3E5F5' },
+  4: { name: '파이썬 기초',     icon: '🐍', color: '#FF7043', bgColor: '#FBE9E7' },
+  5: { name: '데이터 분석 입문', icon: '📊', color: '#FFA726', bgColor: '#FFF3E0' },
+  6: { name: '알고리즘 적용',   icon: '⚙️', color: '#EC407A', bgColor: '#FCE4EC' },
+  7: { name: '코드 마스터',     icon: '🔥', color: '#8D6E63', bgColor: '#EFEBE9' },
 };
 
 export default function HomeScreen() {
@@ -50,12 +54,12 @@ export default function HomeScreen() {
       </View>
 
       <ScrollView contentContainerStyle={styles.scroll}>
-        {[1, 2, 3, 4].map((level) => {
+        {[0, 1, 2, 3, 4, 5, 6, 7].map((level) => {
           const cfg = LEVEL_CONFIG[level];
           const locked = !unlockedLevels.includes(level);
           const levelUnits = UNITS.filter((u) => u.level === level);
           const lvlProg = getLevelProgress(level);
-          const prevLevelProg = level > 1 ? getLevelProgress(level - 1) : null;
+          const prevLevelProg = level > 0 ? getLevelProgress(level - 1) : null;
 
           return (
             <View
@@ -76,7 +80,7 @@ export default function HomeScreen() {
                     레벨 {level}
                   </Text>
                   <Text style={[styles.levelName, locked && styles.lockedText]}>{cfg.name}</Text>
-                  {locked && prevLevelProg && (
+                  {locked && level > 0 && (
                     <Text style={styles.lockHint}>이전 레벨 완료 필요 (70% 이상)</Text>
                   )}
                 </View>
@@ -159,7 +163,7 @@ export default function HomeScreen() {
               })}
 
               {/* Locked overlay note */}
-              {locked && (
+              {locked && level > 0 && (
                 <View style={styles.lockedNote}>
                   <Text style={styles.lockedNoteText}>
                     🔒 레벨 {level - 1} 단원을 70% 이상 정답률로 완료하면 잠금 해제됩니다

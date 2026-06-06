@@ -56,7 +56,7 @@ let store: Store = {
   unitProgress: {},
   xp: 0,
   badges: [],
-  unlockedLevels: [1],
+  unlockedLevels: [0],
   diagnosticDone: false,
   diagnosticLevel: null,
   streak: 0,
@@ -233,7 +233,7 @@ export function completeDiagnostic(level: number) {
   store.diagnosticDone = true;
   store.diagnosticLevel = level;
   store.unlockedLevels = [];
-  for (let l = 1; l <= level; l++) {
+  for (let l = 0; l <= level; l++) {
     store.unlockedLevels.push(l);
   }
   save();
@@ -257,9 +257,9 @@ function checkBadgeAwards(): BadgeId[] {
     awarded.push('streak_3');
   }
 
-  // master – all 4 levels unlocked and all units done ≥70%
+  // master – all 8 levels unlocked and all units done ≥70%
   if (!store.badges.includes('master')) {
-    const allLevels = [1, 2, 3, 4];
+    const allLevels = [0, 1, 2, 3, 4, 5, 6, 7];
     const allComplete = allLevels.every((l) => {
       const prog = getLevelProgress(l);
       return prog.completed === prog.total && prog.total > 0 && prog.accuracy >= 70;
@@ -283,7 +283,7 @@ export function awardBadge(badgeId: BadgeId): boolean {
 
 export function checkLevelUnlock(levelId: number): boolean {
   const nextLevel = levelId + 1;
-  if (nextLevel > 4) return false;
+  if (nextLevel > 7) return false;
   if (store.unlockedLevels.includes(nextLevel)) return false;
 
   const prog = getLevelProgress(levelId);
@@ -291,7 +291,7 @@ export function checkLevelUnlock(levelId: number): boolean {
     store.unlockedLevels.push(nextLevel);
     store.xp += 100; // bonus for unlocking level
     awardBadge('level_up');
-    if (nextLevel === 4 && store.unlockedLevels.length === 4) {
+    if (nextLevel === 7) {
       // check master after final unlock
       checkBadgeAwards();
     }

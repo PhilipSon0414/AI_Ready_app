@@ -13,18 +13,26 @@ import { DIAGNOSTIC_QUESTIONS } from '../data/questions';
 import { completeDiagnostic } from '../store/useAppStore';
 
 const LEVEL_INFO: Record<number, { name: string; icon: string; color: string; desc: string }> = {
-  1: { name: 'AI 입문',  icon: '🌱', color: '#4CAF50', desc: 'AI의 기본 개념에 대한 이해가 시작 단계입니다. 인공지능이 무엇인지, 어떻게 활용되는지 기초부터 차근차근 배워보세요.' },
-  2: { name: 'AI 기초',  icon: '📘', color: '#2196F3', desc: 'AI의 기본 개념은 이해하고 있지만 심화 내용이 필요합니다. 머신러닝, 딥러닝 등 핵심 기술을 학습해 보세요.' },
-  3: { name: 'AI 응용',  icon: '⚡', color: '#FF9800', desc: 'AI에 대한 상당한 지식을 갖추고 있습니다. 실무 응용과 최신 트렌드를 중심으로 실력을 더욱 높여보세요.' },
-  4: { name: 'AI 전문가', icon: '🔥', color: '#9C27B0', desc: 'AI 분야의 높은 전문성을 보유하고 있습니다. 고급 개념과 최신 연구 동향으로 전문가 수준을 완성하세요.' },
+  0: { icon: '🌿', color: '#78909C', name: 'AI 완전 입문', desc: 'AI에 대해 이제 막 관심을 갖기 시작하셨군요! 걱정 마세요. 가장 쉬운 개념부터 차근차근 배워나갈 수 있습니다.' },
+  1: { icon: '👂', color: '#66BB6A', name: 'AI 이름만 들어봤어요', desc: 'AI라는 단어는 익숙하시죠? 이제 그 안에 무엇이 있는지 하나씩 알아갈 시간입니다.' },
+  2: { icon: '📖', color: '#42A5F5', name: 'AI 개념 이해 중', desc: 'AI의 기본 개념들을 이해하고 계시네요! 이제 실제로 코드로 구현하는 방법을 배워볼게요.' },
+  3: { icon: '💻', color: '#AB47BC', name: '코딩 첫걸음', desc: 'Python 코드를 실행해보셨군요! 기초 문법을 다지고 데이터 분석으로 나아가 봅시다.' },
+  4: { icon: '🐍', color: '#FF7043', name: '파이썬 기초', desc: 'Python 기초 문법을 잘 활용하시네요! 이제 데이터를 다루는 강력한 라이브러리를 배울 차례입니다.' },
+  5: { icon: '📊', color: '#FFA726', name: '데이터 분석 입문', desc: '데이터 분석 능력을 갖추셨네요! 이제 머신러닝 알고리즘을 이해하고 적용해 봅시다.' },
+  6: { icon: '⚙️', color: '#EC407A', name: '알고리즘 적용', desc: '다양한 알고리즘을 알고 계시는군요! 코드를 직접 읽고 수정하는 전문가 수준에 도전해 보세요.' },
+  7: { icon: '🔥', color: '#8D6E63', name: '코드 마스터', desc: '코드를 자유롭게 읽고 수정할 수 있는 최고 수준이시네요! AI 전문가의 역량을 갖추셨습니다.' },
 };
 
 function scoreToLevel(score: number): number {
-  // 0-2 → Level 1, 3-4 → Level 1-2, 5-6 → Level 2-3, 7-8 → Level 3-4
-  if (score <= 2) return 1;
-  if (score <= 4) return 2;
-  if (score <= 6) return 3;
-  return 4;
+  // 12 questions: 0-1→0, 2-3→1, 4-5→2, 6-7→3, 8-9→4, 10→5, 11→6, 12→7
+  if (score <= 1) return 0;
+  if (score <= 3) return 1;
+  if (score <= 5) return 2;
+  if (score <= 7) return 3;
+  if (score <= 9) return 4;
+  if (score <= 10) return 5;
+  if (score <= 11) return 6;
+  return 7;
 }
 
 export default function DiagnosticScreen() {
@@ -37,7 +45,7 @@ export default function DiagnosticScreen() {
   const [correctCount, setCorrectCount] = useState(0);
   const correctCountRef = React.useRef(0);
   const [finished, setFinished] = useState(false);
-  const [assignedLevel, setAssignedLevel] = useState(1);
+  const [assignedLevel, setAssignedLevel] = useState(0);
 
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const scaleAnim = useRef(new Animated.Value(0.8)).current;
@@ -102,8 +110,7 @@ export default function DiagnosticScreen() {
             <Text style={styles.levelDesc}>{levelInfo.desc}</Text>
 
             <View style={styles.scoreBreakdown}>
-              {[1, 2, 3, 4].map((l) => {
-                const lqIds = questions.filter((dq) => dq.level === l).map((dq) => dq.id);
+              {[0, 1, 2, 3, 4, 5, 6, 7].map((l) => {
                 return (
                   <View key={l} style={styles.breakdownRow}>
                     <Text style={styles.breakdownLabel}>
@@ -116,7 +123,7 @@ export default function DiagnosticScreen() {
             </View>
 
             <Text style={styles.unlockNote}>
-              레벨 1{assignedLevel > 1 ? `~${assignedLevel}` : ''} 잠금 해제됨!
+              레벨 0{assignedLevel > 0 ? `~${assignedLevel}` : ''} 잠금 해제됨!
             </Text>
 
             <TouchableOpacity style={[styles.startBtn, { backgroundColor: levelInfo.color }]} onPress={goHome}>
