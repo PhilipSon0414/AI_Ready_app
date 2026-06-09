@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { getStore, signOut, setNickname, generateNickname } from '../store/useAppStore';
 import AuthScreen from './AuthScreen';
+import { generateReport, downloadReportAsPDF } from '../lib/reportGenerator';
 
 type Props = {
   user: { id: string; email: string } | null;
@@ -149,6 +150,28 @@ export default function AccountScreen({ user, onAuthSuccess, onSignOut }: Props)
         </View>
       </View>
 
+      {/* Diagnostic Report Section */}
+      {store.diagnosticLevel !== null && store.diagnosticLevel !== undefined && (
+        <>
+          <View style={styles.divider}>
+            <Text style={styles.dividerLabel}>내 진단 레포트</Text>
+          </View>
+          <TouchableOpacity
+            style={styles.reportBtn}
+            onPress={() => {
+              const nick = store.nickname || '익명 학습자';
+              const level = store.diagnosticLevel as number;
+              const totalQ = 12;
+              const correctAns = Math.round(level <= 1 ? level * 2 : level <= 5 ? level * 2 : level * 2);
+              const report = generateReport({ nickname: nick, level, score: correctAns, totalQuestions: totalQ });
+              downloadReportAsPDF(report);
+            }}
+          >
+            <Text style={styles.reportBtnText}>레포트 보기 & PDF 다운로드 📄</Text>
+          </TouchableOpacity>
+        </>
+      )}
+
       <TouchableOpacity style={styles.signOutBtn} onPress={handleSignOut}>
         <Text style={styles.signOutText}>로그아웃</Text>
       </TouchableOpacity>
@@ -237,6 +260,16 @@ const styles = StyleSheet.create({
   },
   statLabel: { fontSize: 15, color: '#555' },
   statValue: { fontSize: 15, fontWeight: '700', color: '#1A1A2E' },
+  reportBtn: {
+    backgroundColor: '#6C63FF',
+    borderRadius: 14,
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+    width: '100%',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  reportBtnText: { color: '#fff', fontSize: 15, fontWeight: '700' },
   signOutBtn: {
     borderWidth: 1,
     borderColor: '#E74C3C',

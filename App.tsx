@@ -7,6 +7,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { loadStore, getStore, initAuth, loadFromCloud } from './store/useAppStore';
 import DiagnosticScreen from './screens/DiagnosticScreen';
+import DiagnosticReportScreen from './screens/DiagnosticReportScreen';
 import DiagnosticIntroScreen from './screens/DiagnosticIntroScreen';
 import WelcomeScreen from './screens/WelcomeScreen';
 import SignupCompleteScreen from './screens/SignupCompleteScreen';
@@ -236,6 +237,8 @@ export default function App() {
           <RootStack.Screen name="DiagnosticIntro" component={DiagnosticIntroScreen} />
 
           <RootStack.Screen name="Diagnostic" component={DiagnosticScreen} />
+
+          <RootStack.Screen name="DiagnosticReport" component={DiagnosticReportScreen} />
 
           <RootStack.Screen name="MainTabs">
             {() => (

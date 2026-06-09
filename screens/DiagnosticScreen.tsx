@@ -44,11 +44,8 @@ export default function DiagnosticScreen() {
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [correctCount, setCorrectCount] = useState(0);
   const correctCountRef = React.useRef(0);
-  const [finished, setFinished] = useState(false);
-  const [assignedLevel, setAssignedLevel] = useState(0);
 
   const fadeAnim = useRef(new Animated.Value(1)).current;
-  const scaleAnim = useRef(new Animated.Value(0.8)).current;
 
   const q = questions[idx];
 
@@ -68,11 +65,8 @@ export default function DiagnosticScreen() {
       if (idx + 1 >= questions.length) {
         const finalCount = correctCountRef.current;
         const level = scoreToLevel(finalCount);
-        setAssignedLevel(level);
-        setCorrectCount(finalCount);
         completeDiagnostic(level);
-        setFinished(true);
-        Animated.spring(scaleAnim, { toValue: 1, useNativeDriver: true }).start();
+        nav.replace('DiagnosticReport', { level, score: finalCount, totalQuestions: questions.length });
       } else {
         setIdx(idx + 1);
         setSelected(null);
@@ -80,59 +74,6 @@ export default function DiagnosticScreen() {
       }
       Animated.timing(fadeAnim, { toValue: 1, duration: 200, useNativeDriver: true }).start();
     });
-  }
-
-  function goHome() {
-    nav.replace('MainTabs');
-  }
-
-  if (finished) {
-    const levelInfo = LEVEL_INFO[assignedLevel];
-    const pct = Math.round((correctCount / questions.length) * 100);
-    return (
-      <SafeAreaView style={styles.container}>
-        <ScrollView contentContainerStyle={styles.resultScroll}>
-          <Animated.View style={[styles.resultCard, { transform: [{ scale: scaleAnim }] }]}>
-            <Text style={styles.resultBig}>🎉</Text>
-            <Text style={styles.resultHeading}>진단 완료!</Text>
-            <Text style={styles.resultScore}>
-              {correctCount}/{questions.length} 정답 ({pct}%)
-            </Text>
-
-            <View style={[styles.levelBadge, { backgroundColor: levelInfo.color + '20', borderColor: levelInfo.color }]}>
-              <Text style={styles.levelBadgeIcon}>{levelInfo.icon}</Text>
-              <View>
-                <Text style={[styles.levelBadgeName, { color: levelInfo.color }]}>레벨 {assignedLevel}</Text>
-                <Text style={[styles.levelBadgeTitle, { color: levelInfo.color }]}>{levelInfo.name}</Text>
-              </View>
-            </View>
-
-            <Text style={styles.levelDesc}>{levelInfo.desc}</Text>
-
-            <View style={styles.scoreBreakdown}>
-              {[0, 1, 2, 3, 4, 5, 6, 7].map((l) => {
-                return (
-                  <View key={l} style={styles.breakdownRow}>
-                    <Text style={styles.breakdownLabel}>
-                      {LEVEL_INFO[l].icon} {LEVEL_INFO[l].name}
-                    </Text>
-                    <View style={[styles.breakdownDot, { backgroundColor: l <= assignedLevel ? LEVEL_INFO[l].color : '#E0E0E0' }]} />
-                  </View>
-                );
-              })}
-            </View>
-
-            <Text style={styles.unlockNote}>
-              레벨 0{assignedLevel > 0 ? `~${assignedLevel}` : ''} 잠금 해제됨!
-            </Text>
-
-            <TouchableOpacity style={[styles.startBtn, { backgroundColor: levelInfo.color }]} onPress={goHome}>
-              <Text style={styles.startBtnText}>학습 시작하기 →</Text>
-            </TouchableOpacity>
-          </Animated.View>
-        </ScrollView>
-      </SafeAreaView>
-    );
   }
 
   const progress = (idx + 1) / questions.length;
@@ -279,56 +220,4 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   nextText: { color: '#fff', fontWeight: '700', fontSize: 15 },
-  // Result styles
-  resultScroll: { flexGrow: 1, justifyContent: 'center', padding: 20 },
-  resultCard: {
-    backgroundColor: '#fff',
-    borderRadius: 24,
-    padding: 28,
-    alignItems: 'center',
-    gap: 14,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 16,
-    elevation: 6,
-  },
-  resultBig: { fontSize: 64 },
-  resultHeading: { fontSize: 26, fontWeight: '800', color: '#1A1A2E' },
-  resultScore: { fontSize: 16, color: '#666' },
-  levelBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 14,
-    borderWidth: 2,
-    borderRadius: 16,
-    paddingHorizontal: 20,
-    paddingVertical: 14,
-    width: '100%',
-    justifyContent: 'center',
-  },
-  levelBadgeIcon: { fontSize: 40 },
-  levelBadgeName: { fontSize: 13, fontWeight: '600' },
-  levelBadgeTitle: { fontSize: 20, fontWeight: '800' },
-  levelDesc: { fontSize: 14, color: '#666', textAlign: 'center', lineHeight: 20 },
-  scoreBreakdown: { width: '100%', gap: 8 },
-  breakdownRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  breakdownLabel: { fontSize: 13, color: '#555' },
-  breakdownDot: { width: 12, height: 12, borderRadius: 6 },
-  unlockNote: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#FFB300',
-    backgroundColor: '#FFF8E1',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-  },
-  startBtn: {
-    width: '100%',
-    padding: 16,
-    borderRadius: 14,
-    alignItems: 'center',
-    marginTop: 4,
-  },
-  startBtnText: { color: '#fff', fontWeight: '800', fontSize: 16 },
 });
