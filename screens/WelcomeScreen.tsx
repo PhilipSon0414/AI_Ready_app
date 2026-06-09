@@ -4,7 +4,6 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  ScrollView,
   SafeAreaView,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -19,33 +18,28 @@ export default function WelcomeScreen({ onLogin, onSignup }: Props) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.inner} showsVerticalScrollIndicator={false}>
+      <View style={styles.inner}>
         <Text style={styles.robot}>🤖</Text>
         <Text style={styles.title}>AI Ready</Text>
-        <Text style={styles.tagline}>당신의 AI 역량을 키워보세요</Text>
+        <Text style={styles.tagline1}>AI 완전 초보부터</Text>
+        <Text style={styles.tagline2}>코드 마스터까지</Text>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>── 이런 분께 추천합니다 ──</Text>
-          <Text style={styles.bullet}>• 🌿 AI가 뭔지 전혀 모르는 분</Text>
-          <Text style={styles.bullet}>• 👂 AI 단어는 들어봤지만 내용은 모르는 분</Text>
-          <Text style={styles.bullet}>• 💻 Python을 처음 배워보고 싶은 분</Text>
-          <Text style={styles.bullet}>• 📊 데이터 분석·머신러닝에 도전하고 싶은 분</Text>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>── 8단계 학습 커리큘럼 ──</Text>
-          <Text style={styles.feature}>🌿 Lv.0 AI 완전 입문</Text>
-          <Text style={styles.feature}>👂 Lv.1 AI 용어 이해  →  📖 Lv.2 AI 개념</Text>
-          <Text style={styles.feature}>💻 Lv.3 Python 첫걸음  →  🐍 Lv.4 파이썬 기초</Text>
-          <Text style={styles.feature}>📊 Lv.5 데이터 분석  →  ⚙️ Lv.6 알고리즘</Text>
-          <Text style={styles.feature}>🔥 Lv.7 코드 마스터</Text>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>── 학습 방법 ──</Text>
-          <Text style={styles.feature}>🎯 12문항 수준 진단 → 맞춤 레벨 시작</Text>
-          <Text style={styles.feature}>📝 객관식  🃏 플래시카드  🔤 빈칸 채우기</Text>
-          <Text style={styles.feature}>🏆 XP · 배지 · 레벨 해제 시스템</Text>
+        <View style={styles.cardRow}>
+          <View style={styles.card}>
+            <Text style={styles.cardIcon}>🎯</Text>
+            <Text style={styles.cardValue}>12문항</Text>
+            <Text style={styles.cardLabel}>진단</Text>
+          </View>
+          <View style={styles.card}>
+            <Text style={styles.cardIcon}>📝</Text>
+            <Text style={styles.cardValue}>3가지</Text>
+            <Text style={styles.cardLabel}>학습법</Text>
+          </View>
+          <View style={styles.card}>
+            <Text style={styles.cardIcon}>🏆</Text>
+            <Text style={styles.cardValue}>8단계</Text>
+            <Text style={styles.cardLabel}>레벨</Text>
+          </View>
         </View>
 
         <TouchableOpacity style={styles.primaryBtn} onPress={onSignup}>
@@ -59,7 +53,7 @@ export default function WelcomeScreen({ onLogin, onSignup }: Props) {
         <TouchableOpacity style={styles.textBtn} onPress={() => nav.navigate('DiagnosticIntro')}>
           <Text style={styles.textBtnText}>비회원으로 시작하기</Text>
         </TouchableOpacity>
-      </ScrollView>
+      </View>
     </SafeAreaView>
   );
 }
@@ -67,35 +61,37 @@ export default function WelcomeScreen({ onLogin, onSignup }: Props) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#F5F7FA' },
   inner: {
+    flex: 1,
     alignItems: 'center',
-    paddingTop: 60,
-    paddingBottom: 48,
+    justifyContent: 'center',
     paddingHorizontal: 32,
+    paddingBottom: 24,
   },
-  robot: { fontSize: 64, marginBottom: 8 },
-  title: { fontSize: 32, fontWeight: '800', color: '#1A1A2E', marginBottom: 6 },
-  tagline: { fontSize: 16, color: '#6C63FF', fontWeight: '600', marginBottom: 32 },
-  section: {
+  robot: { fontSize: 72, marginBottom: 12 },
+  title: { fontSize: 36, fontWeight: '800', color: '#1A1A2E', marginBottom: 6 },
+  tagline1: { fontSize: 18, color: '#6C63FF', fontWeight: '600' },
+  tagline2: { fontSize: 18, color: '#6C63FF', fontWeight: '600', marginBottom: 40 },
+  cardRow: {
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 40,
+  },
+  card: {
     backgroundColor: '#fff',
     borderRadius: 16,
-    padding: 20,
-    width: '100%',
-    maxWidth: 380,
-    marginBottom: 16,
+    paddingVertical: 18,
+    paddingHorizontal: 16,
+    alignItems: 'center',
+    flex: 1,
     shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 6,
-    elevation: 2,
+    shadowOpacity: 0.07,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 3,
   },
-  sectionTitle: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#9E9E9E',
-    textAlign: 'center',
-    marginBottom: 12,
-  },
-  bullet: { fontSize: 14, color: '#333', lineHeight: 22, marginBottom: 4 },
-  feature: { fontSize: 14, color: '#333', lineHeight: 24, marginBottom: 2 },
+  cardIcon: { fontSize: 28, marginBottom: 6 },
+  cardValue: { fontSize: 15, fontWeight: '800', color: '#1A1A2E', marginBottom: 2 },
+  cardLabel: { fontSize: 12, color: '#9E9E9E', fontWeight: '600' },
   primaryBtn: {
     backgroundColor: '#6C63FF',
     borderRadius: 14,
@@ -103,7 +99,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     maxWidth: 380,
-    marginTop: 8,
+    marginBottom: 12,
   },
   primaryBtnText: { color: '#fff', fontSize: 16, fontWeight: '700' },
   secondaryBtn: {
@@ -113,7 +109,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     maxWidth: 380,
-    marginTop: 12,
     borderWidth: 2,
     borderColor: '#6C63FF',
   },
