@@ -42,7 +42,24 @@ type Store = {
   streak: number;
   lastStudyDate: string | null;
   clozeLevel: { [questionId: string]: number };
+  nickname: string;
 };
+
+const ADJECTIVES = ['행복한', '용감한', '귀여운', '씩씩한', '호기심많은', '활발한', '따뜻한', '엉뚱한', '신나는', '느긋한', '열정적인', '상큼한', '유쾌한', '반짝이는', '달콤한'];
+const NOUNS = ['판다', '코알라', '라마', '문어', '캥거루', '알파카', '수달', '햄스터', '고슴도치', '플라밍고', '카피바라', '미어캣', '오카피', '쿼카', '타마린'];
+
+export function generateNickname(): string {
+  const adj = ADJECTIVES[Math.floor(Math.random() * ADJECTIVES.length)];
+  const noun = NOUNS[Math.floor(Math.random() * NOUNS.length)];
+  return `${adj} ${noun}`;
+}
+
+export function setNickname(nickname: string): void {
+  store.nickname = nickname;
+  save();
+  debouncedSync();
+  upsertProfile();
+}
 
 const STORAGE_KEY = 'aiready_store_v2';
 
@@ -62,6 +79,7 @@ let store: Store = {
   streak: 0,
   lastStudyDate: null,
   clozeLevel: {},
+  nickname: '',
 };
 
 function getStorage(): Storage | null {
@@ -89,14 +107,31 @@ export async function loadStore(): Promise<void> {
 
 // ─── Cloud Sync ────────────────────────────────────────────────
 
+async function upsertProfile(): Promise<void> {
+  if (!currentUserId) return;
+  try {
+    await supabase.from('profiles').upsert({
+      user_id: currentUserId,
+      email: currentUserEmail,
+      nickname: store.nickname,
+      xp: store.xp,
+      diagnostic_level: store.diagnosticLevel,
+      last_active: new Date().toISOString(),
+    }, { onConflict: 'user_id' });
+  } catch {
+    // silently fail
+  }
+}
+
 async function syncToCloud(): Promise<void> {
   if (!currentUserId) return;
   try {
     await supabase.from('user_data').upsert({
       user_id: currentUserId,
-      data: store as any,
+      data: { ...store } as any,
       updated_at: new Date().toISOString(),
     }, { onConflict: 'user_id' });
+    await upsertProfile();
   } catch {
     // silently fail - localStorage is still updated
   }
@@ -136,7 +171,20 @@ export async function signUp(email: string, password: string): Promise<{ error: 
       if (error.message.includes('already registered') || error.message.includes('already been registered')) {
         return { error: '이미 사용 중인 이메일입니다' };
       }
+      if (error.message.toLowerCase().includes('confirm')) {
+        return { error: '가입 완료! 이메일을 확인하거나 바로 로그인해보세요' };
+      }
       return { error: '이메일 또는 비밀번호가 잘못되었습니다' };
+    }
+    // Try to immediately sign in after signup
+    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+    if (!signInError) {
+      await loadFromCloud();
+      // Generate nickname if not set
+      if (!store.nickname) {
+        store.nickname = generateNickname();
+        save();
+      }
     }
     return { error: null };
   } catch {
@@ -150,6 +198,8 @@ export async function signIn(email: string, password: string): Promise<{ error: 
     if (error) {
       return { error: '이메일 또는 비밀번호가 잘못되었습니다' };
     }
+    // After successful sign in, sync user data
+    await loadFromCloud();
     return { error: null };
   } catch {
     return { error: '네트워크 오류가 발생했습니다' };
@@ -235,6 +285,10 @@ export function completeDiagnostic(level: number) {
   store.unlockedLevels = [];
   for (let l = 0; l <= level; l++) {
     store.unlockedLevels.push(l);
+  }
+  // Auto-generate nickname if not set
+  if (!store.nickname) {
+    store.nickname = generateNickname();
   }
   save();
   debouncedSync();

@@ -5,8 +5,9 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  TextInput,
 } from 'react-native';
-import { getStore, signOut, getCurrentUser } from '../store/useAppStore';
+import { getStore, signOut, setNickname, generateNickname } from '../store/useAppStore';
 import AuthScreen from './AuthScreen';
 
 type Props = {
@@ -17,18 +18,67 @@ type Props = {
 
 export default function AccountScreen({ user, onAuthSuccess, onSignOut }: Props) {
   const store = getStore();
+  const [editingNickname, setEditingNickname] = useState(false);
+  const [nicknameInput, setNicknameInput] = useState(store.nickname || '');
+
+  function handleSaveNickname() {
+    const trimmed = nicknameInput.trim();
+    if (trimmed) {
+      setNickname(trimmed);
+    }
+    setEditingNickname(false);
+  }
+
+  function handleRandomNickname() {
+    const newNick = generateNickname();
+    setNicknameInput(newNick);
+    setNickname(newNick);
+  }
+
+  const currentNickname = store.nickname || generateNickname();
 
   if (!user) {
+    // Guest: show nickname section + auth prompt
     return (
-      <View style={styles.notLoggedIn}>
-        <Text style={styles.notLoggedInTitle}>내 계정</Text>
+      <ScrollView style={styles.container} contentContainerStyle={styles.inner}>
+        <Text style={styles.title}>👤 내 계정</Text>
+
+        <View style={styles.nicknameCard}>
+          <Text style={styles.nicknameLabel}>내 별명</Text>
+          <Text style={styles.nicknameDisplay}>{currentNickname}</Text>
+          {editingNickname ? (
+            <View style={styles.nicknameEditRow}>
+              <TextInput
+                style={styles.nicknameInput}
+                value={nicknameInput}
+                onChangeText={setNicknameInput}
+                placeholder="새 별명 입력"
+                maxLength={20}
+                autoFocus
+              />
+              <TouchableOpacity style={styles.saveBtn} onPress={handleSaveNickname}>
+                <Text style={styles.saveBtnText}>저장</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View style={styles.nicknameButtonRow}>
+              <TouchableOpacity style={styles.nicknameBtnOutline} onPress={() => { setNicknameInput(currentNickname); setEditingNickname(true); }}>
+                <Text style={styles.nicknameBtnOutlineText}>✏️ 별명 변경</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.nicknameBtnOutline} onPress={handleRandomNickname}>
+                <Text style={styles.nicknameBtnOutlineText}>🎲 랜덤 생성</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
+
         <Text style={styles.notLoggedInDesc}>
           로그인하면 기기가 바뀌어도{'\n'}학습 데이터가 유지됩니다
         </Text>
         <View style={styles.authWrapper}>
           <AuthScreen onSuccess={onAuthSuccess} onSkip={() => {}} />
         </View>
-      </View>
+      </ScrollView>
     );
   }
 
@@ -43,14 +93,38 @@ export default function AccountScreen({ user, onAuthSuccess, onSignOut }: Props)
     onSignOut();
   }
 
-  const initials = user.email.slice(0, 2).toUpperCase();
-
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.inner}>
       <Text style={styles.title}>👤 내 계정</Text>
 
-      <View style={styles.avatarCircle}>
-        <Text style={styles.avatarText}>{initials}</Text>
+      {/* Nickname Section */}
+      <View style={styles.nicknameCard}>
+        <Text style={styles.nicknameLabel}>내 별명</Text>
+        <Text style={styles.nicknameDisplay}>{store.nickname || currentNickname}</Text>
+        {editingNickname ? (
+          <View style={styles.nicknameEditRow}>
+            <TextInput
+              style={styles.nicknameInput}
+              value={nicknameInput}
+              onChangeText={setNicknameInput}
+              placeholder="새 별명 입력"
+              maxLength={20}
+              autoFocus
+            />
+            <TouchableOpacity style={styles.saveBtn} onPress={handleSaveNickname}>
+              <Text style={styles.saveBtnText}>저장</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <View style={styles.nicknameButtonRow}>
+            <TouchableOpacity style={styles.nicknameBtnOutline} onPress={() => { setNicknameInput(store.nickname || currentNickname); setEditingNickname(true); }}>
+              <Text style={styles.nicknameBtnOutlineText}>✏️ 별명 변경</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.nicknameBtnOutline} onPress={handleRandomNickname}>
+              <Text style={styles.nicknameBtnOutlineText}>🎲 랜덤 생성</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
 
       <Text style={styles.email}>{user.email}</Text>
@@ -85,17 +159,51 @@ export default function AccountScreen({ user, onAuthSuccess, onSignOut }: Props)
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#F5F7FA' },
   inner: { alignItems: 'center', paddingTop: 60, paddingBottom: 40, paddingHorizontal: 24 },
-  title: { fontSize: 22, fontWeight: '800', color: '#1A1A2E', marginBottom: 28 },
-  avatarCircle: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: '#6C63FF',
-    justifyContent: 'center',
+  title: { fontSize: 22, fontWeight: '800', color: '#1A1A2E', marginBottom: 20 },
+
+  nicknameCard: {
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    width: '100%',
+    padding: 20,
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOpacity: 0.07,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 3,
   },
-  avatarText: { fontSize: 28, fontWeight: '700', color: '#fff' },
+  nicknameLabel: { fontSize: 12, color: '#9E9E9E', fontWeight: '700', letterSpacing: 1, marginBottom: 8 },
+  nicknameDisplay: { fontSize: 26, fontWeight: '800', color: '#6C63FF', marginBottom: 14 },
+  nicknameButtonRow: { flexDirection: 'row', gap: 10 },
+  nicknameBtnOutline: {
+    borderWidth: 1.5,
+    borderColor: '#6C63FF',
+    borderRadius: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+  },
+  nicknameBtnOutlineText: { color: '#6C63FF', fontSize: 13, fontWeight: '600' },
+  nicknameEditRow: { flexDirection: 'row', alignItems: 'center', gap: 8, width: '100%' },
+  nicknameInput: {
+    flex: 1,
+    borderWidth: 1.5,
+    borderColor: '#6C63FF',
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    fontSize: 15,
+    color: '#1A1A2E',
+  },
+  saveBtn: {
+    backgroundColor: '#6C63FF',
+    borderRadius: 10,
+    paddingVertical: 9,
+    paddingHorizontal: 16,
+  },
+  saveBtnText: { color: '#fff', fontWeight: '700', fontSize: 14 },
+
   email: { fontSize: 16, fontWeight: '600', color: '#1A1A2E', marginBottom: 4 },
   joinDate: { fontSize: 13, color: '#9E9E9E', marginBottom: 28 },
   divider: {
@@ -137,15 +245,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 48,
   },
   signOutText: { color: '#E74C3C', fontSize: 15, fontWeight: '700' },
-  notLoggedIn: { flex: 1, backgroundColor: '#F5F7FA' },
-  notLoggedInTitle: {
-    fontSize: 22,
-    fontWeight: '800',
-    color: '#1A1A2E',
-    textAlign: 'center',
-    paddingTop: 60,
-    marginBottom: 8,
-  },
   notLoggedInDesc: {
     fontSize: 15,
     color: '#6C63FF',
@@ -153,5 +252,5 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     marginBottom: 8,
   },
-  authWrapper: { flex: 1 },
+  authWrapper: { flex: 1, width: '100%' },
 });

@@ -20,6 +20,7 @@ import ReviewScreen from './screens/ReviewScreen';
 import DashScreen from './screens/DashScreen';
 import BadgesScreen from './screens/BadgesScreen';
 import AccountScreen from './screens/AccountScreen';
+import AdminScreen from './screens/AdminScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -111,6 +112,17 @@ function MainTabs({ user, onAuthSuccess, onSignOut }: MainTabsProps) {
           />
         )}
       </Tab.Screen>
+      {user?.email === 'jidong.son@gmail.com' && (
+        <Tab.Screen
+          name="Admin"
+          options={{
+            tabBarLabel: '관리자',
+            tabBarIcon: ({ focused }) => <TabIcon emoji="🛡️" active={focused} />,
+          }}
+        >
+          {() => <AdminScreen user={user} />}
+        </Tab.Screen>
+      )}
     </Tab.Navigator>
   );
 }
