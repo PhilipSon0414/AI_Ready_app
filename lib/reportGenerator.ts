@@ -1,4 +1,4 @@
-import { jsPDF } from 'jspdf';
+import { Platform } from 'react-native';
 
 export type DiagnosticReport = {
   nickname: string;
@@ -87,141 +87,91 @@ export function generateReport(params: {
 }
 
 export function downloadReportAsPDF(report: DiagnosticReport): void {
-  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-  const pageW = 210;
-  const margin = 20;
-  const contentW = pageW - margin * 2;
+  if (Platform.OS !== 'web') return;
 
-  // Helper
-  const addText = (text: string, x: number, y: number, opts: any = {}) => {
-    doc.setFontSize(opts.size || 11);
-    doc.setFont('helvetica', opts.style || 'normal');
-    if (opts.color) doc.setTextColor(...opts.color);
-    else doc.setTextColor(30, 30, 30);
-    if (opts.align === 'center') doc.text(text, x, y, { align: 'center' });
-    else doc.text(text, x, y);
-    return y + (opts.lineHeight || 7);
+  const barWidth = report.score;
+  const html = `<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Noto Sans KR', sans-serif; background: #fff; color: #1a1a2e; width: 210mm; min-height: 297mm; padding: 0; }
+  .header { background: #6C63FF; color: #fff; padding: 32px 28px 24px; }
+  .header-title { font-size: 28px; font-weight: 900; margin-bottom: 4px; }
+  .header-sub { font-size: 14px; opacity: 0.85; }
+  .header-date { font-size: 11px; opacity: 0.7; margin-top: 6px; }
+  .content { padding: 28px; }
+  .name { font-size: 20px; font-weight: 900; text-align: center; margin-bottom: 20px; color: #1a1a2e; }
+  .level-box { background: #f0edff; border-radius: 14px; padding: 20px 24px; margin-bottom: 18px; display: flex; align-items: center; gap: 20px; }
+  .level-badge { font-size: 42px; }
+  .level-info { flex: 1; }
+  .level-num { font-size: 28px; font-weight: 900; color: #6C63FF; }
+  .level-name { font-size: 16px; font-weight: 700; color: #1a1a2e; margin-top: 2px; }
+  .level-score { font-size: 12px; color: #666; margin-top: 4px; }
+  .score-pct { font-size: 32px; font-weight: 900; color: #6C63FF; text-align: right; }
+  .bar-bg { background: #e8ecf0; border-radius: 99px; height: 10px; margin: 10px 0; }
+  .bar-fill { background: #6C63FF; border-radius: 99px; height: 10px; width: ${barWidth}%; }
+  .message { background: #f0edff; border-radius: 12px; padding: 16px 20px; margin-bottom: 20px; font-size: 13px; line-height: 1.7; color: #333; }
+  .section { margin-bottom: 18px; }
+  .section-title { font-size: 14px; font-weight: 700; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 2px solid currentColor; }
+  .green { color: #4CAF50; }
+  .red { color: #EF5350; }
+  .blue-box { background: #e8f5e9; border-radius: 12px; padding: 16px 20px; }
+  .blue-box .section-title { color: #2E7D32; border-color: #4CAF50; }
+  ul, ol { padding-left: 20px; }
+  li { font-size: 13px; line-height: 1.8; color: #333; }
+  .footer { text-align: center; padding: 20px; font-size: 11px; color: #aaa; border-top: 1px solid #eee; margin-top: 10px; }
+  @media print {
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    @page { size: A4; margin: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-title">🤖 AI Ready</div>
+  <div class="header-sub">AI &amp; Python 역량 진단 레포트</div>
+  <div class="header-date">${report.generatedAt}</div>
+</div>
+<div class="content">
+  <div class="name">${report.nickname} 님의 역량 레포트</div>
+  <div class="level-box">
+    <div class="level-badge">${report.emoji}</div>
+    <div class="level-info">
+      <div class="level-num">Lv.${report.level}</div>
+      <div class="level-name">${report.levelName}</div>
+      <div class="level-score">진단 점수: ${report.correctAnswers}/${report.totalQuestions}문항 정답</div>
+    </div>
+    <div class="score-pct">${report.score}%</div>
+  </div>
+  <div class="bar-bg"><div class="bar-fill"></div></div>
+  <div class="message">${report.message}</div>
+  <div class="section">
+    <div class="section-title green">✓ 강점 영역</div>
+    <ul>${report.strengths.map(s => `<li>${s}</li>`).join('')}</ul>
+  </div>
+  <div class="section">
+    <div class="section-title red">△ 성장 포인트</div>
+    <ul>${report.improvements.map(s => `<li>${s}</li>`).join('')}</ul>
+  </div>
+  <div class="section blue-box">
+    <div class="section-title">→ 추천 다음 단계</div>
+    <ol>${report.nextSteps.map(s => `<li>${s}</li>`).join('')}</ol>
+  </div>
+</div>
+<div class="footer">AI Ready — 당신의 AI 역량을 키워드립니다</div>
+</body></html>`;
+
+  const printWindow = (window as any).open('', '_blank', 'width=900,height=700');
+  if (!printWindow) return;
+  printWindow.document.write(html);
+  printWindow.document.close();
+  printWindow.onload = () => {
+    printWindow.focus();
+    printWindow.print();
   };
-
-  let y = 0;
-
-  // Header bg
-  doc.setFillColor(108, 99, 255);
-  doc.rect(0, 0, 210, 45, 'F');
-
-  // Title
-  y = 16;
-  doc.setFontSize(22);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(255, 255, 255);
-  doc.text('AI Ready', pageW / 2, y, { align: 'center' });
-  y += 10;
-  doc.setFontSize(13);
-  doc.setFont('helvetica', 'normal');
-  doc.text('AI & Python Capability Report', pageW / 2, y, { align: 'center' });
-  y += 8;
-  doc.setFontSize(9);
-  doc.text(report.generatedAt, pageW / 2, y, { align: 'center' });
-
-  y = 55;
-
-  // Name
-  doc.setFontSize(16);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(30, 30, 30);
-  doc.text(`${report.nickname} Report`, pageW / 2, y, { align: 'center' });
-  y += 14;
-
-  // Level box
-  doc.setFillColor(245, 247, 250);
-  doc.roundedRect(margin, y, contentW, 28, 4, 4, 'F');
-  doc.setFontSize(24);
-  doc.text(`Lv.${report.level}`, margin + 16, y + 18);
-  doc.setFontSize(14);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(30, 30, 30);
-  doc.text(report.levelName, margin + 36, y + 12);
-  doc.setFontSize(10);
-  doc.setFont('helvetica', 'normal');
-  doc.setTextColor(100, 100, 100);
-  doc.text(`Score: ${report.correctAnswers}/${report.totalQuestions} correct (${report.score}%)`, margin + 36, y + 22);
-  y += 36;
-
-  // Score bar
-  doc.setFontSize(10);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(30, 30, 30);
-  doc.text('Score', margin, y);
-  y += 5;
-  doc.setFillColor(232, 236, 240);
-  doc.roundedRect(margin, y, contentW, 6, 3, 3, 'F');
-  doc.setFillColor(108, 99, 255);
-  doc.roundedRect(margin, y, contentW * report.score / 100, 6, 3, 3, 'F');
-  y += 14;
-
-  // Message box
-  doc.setFillColor(240, 237, 255);
-  doc.roundedRect(margin, y, contentW, 22, 4, 4, 'F');
-  doc.setFontSize(9);
-  doc.setFont('helvetica', 'normal');
-  doc.setTextColor(60, 60, 60);
-  const msgLines = doc.splitTextToSize(report.message, contentW - 10);
-  doc.text(msgLines, margin + 5, y + 8);
-  y += 28;
-
-  // Strengths
-  doc.setFontSize(12);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(76, 175, 80);
-  doc.text('Strengths', margin, y);
-  y += 7;
-  doc.setFontSize(10);
-  doc.setFont('helvetica', 'normal');
-  doc.setTextColor(50, 50, 50);
-  report.strengths.forEach(s => {
-    doc.text(`  - ${s}`, margin, y);
-    y += 6;
-  });
-  y += 4;
-
-  // Improvements
-  doc.setFontSize(12);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(239, 83, 80);
-  doc.text('Growth Areas', margin, y);
-  y += 7;
-  doc.setFontSize(10);
-  doc.setFont('helvetica', 'normal');
-  doc.setTextColor(50, 50, 50);
-  report.improvements.forEach(s => {
-    doc.text(`  - ${s}`, margin, y);
-    y += 6;
-  });
-  y += 4;
-
-  // Next steps
-  doc.setFillColor(232, 245, 233);
-  doc.roundedRect(margin, y, contentW, report.nextSteps.length * 7 + 18, 4, 4, 'F');
-  doc.setFontSize(12);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(46, 125, 50);
-  doc.text('  Recommended Next Steps', margin + 3, y + 10);
-  y += 16;
-  doc.setFontSize(10);
-  doc.setFont('helvetica', 'normal');
-  doc.setTextColor(30, 70, 30);
-  report.nextSteps.forEach((s, i) => {
-    doc.text(`  ${i + 1}. ${s}`, margin + 3, y);
-    y += 7;
-  });
-  y += 8;
-
-  // Footer
-  doc.setFontSize(8);
-  doc.setTextColor(180, 180, 180);
-  doc.text('AI Ready — Grow your AI skills', pageW / 2, 285, { align: 'center' });
-
-  doc.save(`AI_Ready_Report_Lv${report.level}_${report.nickname}.pdf`);
 }
 
 export async function sendReportByEmail(report: DiagnosticReport, toEmail: string): Promise<{ success: boolean; error?: string }> {
