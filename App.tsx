@@ -11,6 +11,7 @@ import QuizScreen from './screens/QuizScreen';
 import ReviewScreen from './screens/ReviewScreen';
 import DashScreen from './screens/DashScreen';
 import StatsScreen from './screens/StatsScreen';
+import RobotScreen from './screens/RobotScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -62,6 +63,14 @@ export default function App() {
             tabBarLabelStyle: { fontSize: 11, fontWeight: '600' },
           }}
         >
+          <Tab.Screen
+            name="Robot"
+            component={RobotScreen}
+            options={{
+              tabBarLabel: 'Level 0',
+              tabBarIcon: ({ focused }) => <TabIcon emoji="🤖" active={focused} />,
+            }}
+          />
           <Tab.Screen
             name="Home"
             component={UnitsStack}
