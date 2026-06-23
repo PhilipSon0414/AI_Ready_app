@@ -25,7 +25,17 @@ export default function QuizScreen() {
   const { unitId } = route.params;
 
   const unit = UNITS.find((u) => u.id === unitId)!;
-  const questions = unit.questions;
+
+  const [questions] = useState(() =>
+    unit.questions.map((q) => {
+      const indexed = q.options.map((opt, i) => ({ opt, isAnswer: i === q.answer }));
+      for (let i = indexed.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [indexed[i], indexed[j]] = [indexed[j], indexed[i]];
+      }
+      return { ...q, options: indexed.map((o) => o.opt), answer: indexed.findIndex((o) => o.isAnswer) };
+    })
+  );
 
   const [idx, setIdx] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
