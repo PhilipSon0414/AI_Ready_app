@@ -35,9 +35,22 @@ function scoreToLevel(score: number): number {
   return 7;
 }
 
+function shuffleOptions(q: typeof DIAGNOSTIC_QUESTIONS[0]) {
+  const indexed = q.options.map((opt, i) => ({ opt, isAnswer: i === q.answer }));
+  for (let i = indexed.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [indexed[i], indexed[j]] = [indexed[j], indexed[i]];
+  }
+  return {
+    ...q,
+    options: indexed.map((o) => o.opt),
+    answer: indexed.findIndex((o) => o.isAnswer),
+  };
+}
+
 export default function DiagnosticScreen() {
   const nav = useNavigation<any>();
-  const questions = DIAGNOSTIC_QUESTIONS;
+  const [questions] = useState(() => DIAGNOSTIC_QUESTIONS.map(shuffleOptions));
 
   const [idx, setIdx] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);

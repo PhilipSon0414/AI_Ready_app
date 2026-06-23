@@ -54,6 +54,19 @@ export default function HomeScreen() {
       </View>
 
       <ScrollView contentContainerStyle={styles.scroll}>
+        {/* 바보로봇 코딩 안내 배너 */}
+        <TouchableOpacity
+          style={styles.baboBanner}
+          onPress={() => nav.navigate('BaboRobot', { stageIndex: 0 })}
+        >
+          <Text style={styles.baboBannerEmoji}>🤖</Text>
+          <View style={styles.baboBannerText}>
+            <Text style={styles.baboBannerTitle}>바보로봇 코딩 — NEW!</Text>
+            <Text style={styles.baboBannerDesc}>명령을 주면 그대로 실행하는 바보로봇과 함께{'\n'}알고리즘 사고를 재미있게 배워요!</Text>
+          </View>
+          <Text style={styles.baboBannerArrow}>›</Text>
+        </TouchableOpacity>
+
         {[0, 1, 2, 3, 4, 5, 6, 7].map((level) => {
           const cfg = LEVEL_CONFIG[level];
           const locked = !unlockedLevels.includes(level);
@@ -208,6 +221,21 @@ const styles = StyleSheet.create({
   statChipText: { color: '#fff', fontSize: 13, fontWeight: '700' },
   xpText: { color: '#FFE082' },
   scroll: { padding: 16, gap: 16 },
+  baboBanner: {
+    backgroundColor: '#1A1A2E',
+    borderRadius: 16,
+    padding: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    borderLeftWidth: 4,
+    borderLeftColor: '#00FF88',
+  },
+  baboBannerEmoji: { fontSize: 36 },
+  baboBannerText: { flex: 1 },
+  baboBannerTitle: { color: '#00FF88', fontWeight: '800', fontSize: 14, marginBottom: 4 },
+  baboBannerDesc: { color: 'rgba(255,255,255,0.75)', fontSize: 12, lineHeight: 18 },
+  baboBannerArrow: { color: '#00FF88', fontSize: 24, fontWeight: '700' },
   levelCard: {
     backgroundColor: '#fff',
     borderRadius: 18,
