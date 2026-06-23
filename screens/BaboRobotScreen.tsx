@@ -299,29 +299,28 @@ export default function BaboRobotScreen() {
         <Text style={styles.missionItems}>📦 {variant.items}</Text>
       </View>
 
-      {/* Hint bar — shows after 1st and 2nd failure */}
-      {currentHint && (
-        <View style={[styles.hintBar, failCount >= 2 && styles.hintBar2]}>
-          <Text style={styles.hintText}>{currentHint}</Text>
-        </View>
-      )}
-
-      {/* Fail counter dots */}
-      {failCount > 0 && (
-        <View style={styles.failRow}>
-          <Text style={styles.failLabel}>실패: </Text>
-          {[0, 1, 2].map((i) => (
-            <View key={i} style={[styles.failDot, i < failCount && styles.failDotActive]} />
-          ))}
-          {failCount < 3 && (
-            <Text style={styles.failHint}> — {3 - failCount}번 더 실패하면 정답을 볼 수 있어요</Text>
-          )}
-        </View>
-      )}
-
       <View style={[styles.body, isWide && styles.bodyRow]}>
         {/* Left: command builder */}
         <View style={[styles.panel, isWide && styles.panelLeft]}>
+          {/* Fail counter dots */}
+          {failCount > 0 && (
+            <View style={styles.failRow}>
+              {[0, 1, 2].map((i) => (
+                <View key={i} style={[styles.failDot, i < failCount && styles.failDotActive]} />
+              ))}
+              <Text style={styles.failHint}>
+                {failCount < 3 ? ` 실패 ${failCount}/3 — ${3 - failCount}번 더 실패시 정답 공개` : ' 실패 3/3'}
+              </Text>
+            </View>
+          )}
+
+          {/* Hint bar — inside panel, always visible */}
+          {currentHint && (
+            <View style={[styles.hintBar, failCount >= 2 && styles.hintBar2]}>
+              <Text style={styles.hintText}>{currentHint}</Text>
+            </View>
+          )}
+
           <Text style={styles.panelTitle}>📋 명령어 목록</Text>
 
           {/* Quick commands */}
