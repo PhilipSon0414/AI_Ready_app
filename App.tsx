@@ -238,6 +238,8 @@ export default function App() {
 
           <RootStack.Screen name="DiagnosticIntro" component={DiagnosticIntroScreen} />
 
+          <RootStack.Screen name="BaboRobot" component={BaboRobotScreen} options={{ headerShown: false }} />
+
           <RootStack.Screen name="Diagnostic" component={DiagnosticScreen} />
 
           <RootStack.Screen name="DiagnosticReport" component={DiagnosticReportScreen} />

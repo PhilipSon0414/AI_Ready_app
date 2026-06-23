@@ -56,7 +56,7 @@ export default function WelcomeScreen({ onLogin, onSignup }: Props) {
         </TouchableOpacity>
 
         {/* 바보로봇 코딩 배너 */}
-        <TouchableOpacity style={styles.baboBanner} onPress={() => nav.navigate('DiagnosticIntro')}>
+        <TouchableOpacity style={styles.baboBanner} onPress={() => nav.navigate('BaboRobot', { stageIndex: 0 })}>
           <Text style={styles.baboBannerEmoji}>🤖</Text>
           <View style={styles.baboBannerBody}>
             <Text style={styles.baboBannerTitle}>바보로봇 코딩 — NEW!</Text>
