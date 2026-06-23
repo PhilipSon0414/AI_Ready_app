@@ -231,13 +231,17 @@ export default function BaboRobotScreen() {
     setIsLoading(true);
     setRobotLog('🔄 명령 실행 중...');
 
-    // API 키가 없으면 로컬 fallback
+    // API 키가 없으면 클라이언트 판단만으로 처리
     if (!ANTHROPIC_API_KEY) {
-      await new Promise((r) => setTimeout(r, 800));
-      const cmdList = commands.map((c, i) => `${i + 1}. ${c}`).join(', ');
-      const text = `🖥️ **실행 과정:**\n${cmdList} — 명령 수신!\n\n🚨 **오류 발생:**\n삐빅! 바보로봇이 열심히 실행했지만 뭔가 잘못됐습니다.\n\n💡 **로봇 시스템 메시지:**\n명령 순서나 내용을 다시 확인해보세요. (API 키 미설정 — Netlify 환경변수 EXPO_PUBLIC_ANTHROPIC_API_KEY 확인 필요)`;
-      setRobotLog(text);
-      recordFail(failCount + 1);
+      await new Promise((r) => setTimeout(r, 600));
+      if (isClientSuccess()) {
+        setRobotLog('✅ 미션 성공!\n\n삐빅- 명령 순서가 올바릅니다! 바보로봇이 미션을 완료했습니다! 🎉');
+        setTimeout(() => setShowConceptModal(true), 800);
+      } else {
+        const cmdList = commands.map((c, i) => `${i + 1}. ${c}`).join('\n');
+        setRobotLog(`🖥️ 실행 과정:\n${cmdList}\n\n🚨 오류 발생:\n삐빅! 명령 순서나 내용을 다시 확인해보세요.\n\n(※ API 키가 설정되면 바보로봇이 더 재미있게 반응해요!)`);
+        recordFail(failCount + 1);
+      }
       setIsLoading(false);
       return;
     }
