@@ -206,14 +206,13 @@ export default function BaboRobotScreen() {
 
   // Client-side success check: if user commands overlap 70%+ with answer steps
   const isClientSuccess = () => {
-    const answerWords = variant.answer.join(' ').toLowerCase();
-    const userWords = commands.join(' ').toLowerCase();
+    const userText = commands.join(' ').toLowerCase().replace(/\s+/g, '');
     let matches = 0;
     variant.answer.forEach((step) => {
-      const key = step.replace(/[^\w가-힣]/g, '').toLowerCase();
-      if (key.length > 1 && userWords.includes(key)) matches++;
+      const key = step.toLowerCase().replace(/\s+/g, '');
+      if (key.length > 1 && userText.includes(key)) matches++;
     });
-    return matches / variant.answer.length >= 0.7;
+    return matches / variant.answer.length >= 0.6;
   };
 
   const recordFail = (newFail: number) => {
