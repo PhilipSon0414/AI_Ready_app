@@ -204,6 +204,18 @@ export default function BaboRobotScreen() {
     setInputText('');
   };
 
+  // Client-side success check: if user commands overlap 70%+ with answer steps
+  const isClientSuccess = () => {
+    const answerWords = variant.answer.join(' ').toLowerCase();
+    const userWords = commands.join(' ').toLowerCase();
+    let matches = 0;
+    variant.answer.forEach((step) => {
+      const key = step.replace(/[^\w가-힣]/g, '').toLowerCase();
+      if (key.length > 1 && userWords.includes(key)) matches++;
+    });
+    return matches / variant.answer.length >= 0.7;
+  };
+
   const recordFail = (newFail: number) => {
     setFailCount(newFail);
     if (newFail >= 3) {
@@ -255,7 +267,15 @@ export default function BaboRobotScreen() {
       setRobotLog(text);
       setTimeout(() => logScrollRef.current?.scrollToEnd({ animated: true }), 100);
 
-      if (text.includes('✅ 미션 성공')) {
+      const success =
+        text.includes('미션 성공') ||
+        text.includes('성공!') ||
+        text.includes('완료!') ||
+        text.includes('✅') ||
+        isClientSuccess();
+
+      if (success) {
+        setRobotLog((prev) => prev.includes('✅') ? prev : prev + '\n\n✅ 미션 성공!');
         setTimeout(() => setShowConceptModal(true), 800);
       } else {
         recordFail(failCount + 1);
