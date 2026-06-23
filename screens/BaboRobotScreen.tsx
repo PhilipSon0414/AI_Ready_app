@@ -284,9 +284,15 @@ export default function BaboRobotScreen() {
         recordFail(failCount + 1);
       }
     } catch (err) {
-      const errMsg = err instanceof Error ? err.message : '알 수 없는 오류';
-      setRobotLog(`🔌 연결 오류: ${errMsg}\n\n삐빅! 다시 시도해주세요.`);
-      recordFail(failCount + 1);
+      // API 실패해도 명령어가 정답과 일치하면 성공 처리
+      if (isClientSuccess()) {
+        setRobotLog('✅ 미션 성공!\n\n삐빅- 명령 순서가 올바릅니다! 바보로봇이 미션을 완료했습니다! 🎉');
+        setTimeout(() => setShowConceptModal(true), 800);
+      } else {
+        const errMsg = err instanceof Error ? err.message : '알 수 없는 오류';
+        setRobotLog(`🔌 연결 오류: ${errMsg}\n\n삐빅! 명령 순서를 다시 확인해보세요.`);
+        recordFail(failCount + 1);
+      }
     } finally {
       setIsLoading(false);
     }
