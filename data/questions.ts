@@ -15,6 +15,7 @@ export type Unit = {
   title: string;
   icon: string;
   level: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
+  unitType?: "quiz" | "baboRobot";
   questions: Question[];
 };
 
@@ -1370,6 +1371,7 @@ export const UNITS: Unit[] = [
   { id: 'u0_1', title: 'AI란 무엇인가?', icon: '🤖', level: 0, questions: u0_1_questions },
   { id: 'u0_2', title: 'AI는 어떻게 배울까?', icon: '🧠', level: 0, questions: u0_2_questions },
   { id: 'u0_3', title: 'AI와 우리 생활', icon: '🌍', level: 0, questions: u0_3_questions },
+  { id: 'u0_4', title: '바보로봇 코딩', icon: '🤖', level: 0, unitType: 'baboRobot', questions: [] },
   // Level 1
   { id: 'u1_1', title: 'AI 핵심 용어', icon: '📚', level: 1, questions: u1_1_questions },
   { id: 'u1_2', title: 'AI 도구들', icon: '🛠️', level: 1, questions: u1_2_questions },

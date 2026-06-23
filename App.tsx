@@ -22,6 +22,7 @@ import DashScreen from './screens/DashScreen';
 import BadgesScreen from './screens/BadgesScreen';
 import AccountScreen from './screens/AccountScreen';
 import AdminScreen from './screens/AdminScreen';
+import BaboRobotScreen from './screens/BaboRobotScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -39,6 +40,7 @@ function HomeStack() {
       <Stack.Screen name="Quiz" component={QuizScreen} />
       <Stack.Screen name="Flashcard" component={FlashcardScreen} />
       <Stack.Screen name="Cloze" component={ClozeScreen} />
+      <Stack.Screen name="BaboRobot" component={BaboRobotScreen} />
     </Stack.Navigator>
   );
 }

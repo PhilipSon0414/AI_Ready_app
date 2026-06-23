@@ -126,7 +126,13 @@ export default function HomeScreen() {
                       unitDone && styles.unitRowDone,
                     ]}
                     onPress={() => {
-                      if (!locked) nav.navigate('StudyMode', { unitId: unit.id });
+                      if (!locked) {
+                        if (unit.unitType === 'baboRobot') {
+                          nav.navigate('BaboRobot', { stageIndex: 0 });
+                        } else {
+                          nav.navigate('StudyMode', { unitId: unit.id });
+                        }
+                      }
                     }}
                     disabled={locked}
                   >
@@ -151,7 +157,7 @@ export default function HomeScreen() {
                           />
                         </View>
                         <Text style={[styles.unitProgressLabel, locked && styles.lockedText]}>
-                          {prog.completed}/{prog.total}
+                          {unit.unitType === 'baboRobot' ? '인터랙티브' : `${prog.completed}/${prog.total}`}
                         </Text>
                       </View>
                     </View>
