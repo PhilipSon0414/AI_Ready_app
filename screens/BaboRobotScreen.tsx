@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
-const ANTHROPIC_API_KEY = 'ANTHROPIC_API_KEY_PLACEHOLDER';
+const ANTHROPIC_API_KEY = process.env.EXPO_PUBLIC_ANTHROPIC_API_KEY ?? '';
 
 const STAGES = [
   {
