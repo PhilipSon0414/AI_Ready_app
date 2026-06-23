@@ -204,6 +204,13 @@ export default function BaboRobotScreen() {
     setInputText('');
   };
 
+  const recordFail = (newFail: number) => {
+    setFailCount(newFail);
+    if (newFail >= 3) {
+      setTimeout(() => setShowAnswerModal(true), 800);
+    }
+  };
+
   const executeCommands = async () => {
     if (commands.length === 0) {
       setRobotLog('삐빅- 명령어가 없습니다! 🤖');
@@ -211,6 +218,18 @@ export default function BaboRobotScreen() {
     }
     setIsLoading(true);
     setRobotLog('🔄 명령 실행 중...');
+
+    // API 키가 없으면 로컬 fallback
+    if (!ANTHROPIC_API_KEY) {
+      await new Promise((r) => setTimeout(r, 800));
+      const cmdList = commands.map((c, i) => `${i + 1}. ${c}`).join(', ');
+      const text = `🖥️ **실행 과정:**\n${cmdList} — 명령 수신!\n\n🚨 **오류 발생:**\n삐빅! 바보로봇이 열심히 실행했지만 뭔가 잘못됐습니다.\n\n💡 **로봇 시스템 메시지:**\n명령 순서나 내용을 다시 확인해보세요. (API 키 미설정 — Netlify 환경변수 EXPO_PUBLIC_ANTHROPIC_API_KEY 확인 필요)`;
+      setRobotLog(text);
+      recordFail(failCount + 1);
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const userMessage = `현재 미션: ${variant.title}\n환경: ${variant.items}\n\n명령어 목록:\n${commands.map((c, i) => `${i + 1}. ${c}`).join('\n')}\n\n위 명령어를 순서대로 실행해주세요.`;
 
@@ -239,14 +258,12 @@ export default function BaboRobotScreen() {
       if (text.includes('✅ 미션 성공')) {
         setTimeout(() => setShowConceptModal(true), 800);
       } else {
-        const newFail = failCount + 1;
-        setFailCount(newFail);
-        if (newFail >= 3) {
-          setTimeout(() => setShowAnswerModal(true), 800);
-        }
+        recordFail(failCount + 1);
       }
-    } catch {
-      setRobotLog('🔌 연결 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+    } catch (err) {
+      const errMsg = err instanceof Error ? err.message : '알 수 없는 오류';
+      setRobotLog(`🔌 연결 오류: ${errMsg}\n\n삐빅! 다시 시도해주세요.`);
+      recordFail(failCount + 1);
     } finally {
       setIsLoading(false);
     }
