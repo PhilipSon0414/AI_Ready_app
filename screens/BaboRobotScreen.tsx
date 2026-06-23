@@ -186,6 +186,15 @@ export default function BaboRobotScreen() {
   const stageData = STAGES[currentStage];
   const variant = stageData.variants[variantIndex];
 
+  const shuffledCommands = React.useMemo(() => {
+    const arr = [...variant.quickCommands];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }, [currentStage, variantIndex]);
+
   const currentHint = failCount === 1 ? variant.hint1 : failCount === 2 ? variant.hint2 : null;
 
   const addCommand = (cmd: string) => {
@@ -380,7 +389,7 @@ export default function BaboRobotScreen() {
 
           {/* Quick commands */}
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.pillRow}>
-            {variant.quickCommands.map((qc, i) => (
+            {shuffledCommands.map((qc, i) => (
               <TouchableOpacity key={i} style={styles.pill} onPress={() => addCommand(qc)}>
                 <Text style={styles.pillText}>+ {qc}</Text>
               </TouchableOpacity>
