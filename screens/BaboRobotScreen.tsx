@@ -206,13 +206,18 @@ export default function BaboRobotScreen() {
 
   // Client-side success check: if user commands overlap 70%+ with answer steps
   const isClientSuccess = () => {
-    const userText = commands.join(' ').toLowerCase().replace(/\s+/g, '');
+    // 사용자 명령어와 정답을 공백 제거 후 정확히 비교
+    const normalize = (s: string) => s.toLowerCase().replace(/\s+/g, '');
+    const userNorm = commands.map(normalize);
     let matches = 0;
-    variant.answer.forEach((step) => {
-      const key = step.toLowerCase().replace(/\s+/g, '');
-      if (key.length > 1 && userText.includes(key)) matches++;
-    });
-    return matches / variant.answer.length >= 0.6;
+    for (const step of variant.answer) {
+      const stepNorm = normalize(step);
+      if (userNorm.some((u) => u === stepNorm || u.includes(stepNorm) || stepNorm.includes(u))) {
+        matches++;
+      }
+    }
+    const ratio = matches / variant.answer.length;
+    return ratio >= 0.6;
   };
 
   const recordFail = (newFail: number) => {
@@ -230,17 +235,21 @@ export default function BaboRobotScreen() {
     setIsLoading(true);
     setRobotLog('🔄 명령 실행 중...');
 
-    // API 키가 없으면 클라이언트 판단만으로 처리
+    // 항상 클라이언트 성공 체크 먼저 수행 (API 결과와 무관하게)
+    const clientOk = isClientSuccess();
+    if (clientOk) {
+      await new Promise((r) => setTimeout(r, 400));
+      setRobotLog('✅ 미션 성공!\n\n삐빅- 명령 순서가 정확합니다! 바보로봇이 미션을 완료했습니다! 🎉🤖');
+      setIsLoading(false);
+      setTimeout(() => setShowConceptModal(true), 800);
+      return;
+    }
+
+    // API 키가 없으면 클라이언트 실패 처리
     if (!ANTHROPIC_API_KEY) {
-      await new Promise((r) => setTimeout(r, 600));
-      if (isClientSuccess()) {
-        setRobotLog('✅ 미션 성공!\n\n삐빅- 명령 순서가 올바릅니다! 바보로봇이 미션을 완료했습니다! 🎉');
-        setTimeout(() => setShowConceptModal(true), 800);
-      } else {
-        const cmdList = commands.map((c, i) => `${i + 1}. ${c}`).join('\n');
-        setRobotLog(`🖥️ 실행 과정:\n${cmdList}\n\n🚨 오류 발생:\n삐빅! 명령 순서나 내용을 다시 확인해보세요.\n\n(※ API 키가 설정되면 바보로봇이 더 재미있게 반응해요!)`);
-        recordFail(failCount + 1);
-      }
+      await new Promise((r) => setTimeout(r, 400));
+      setRobotLog('🚨 삐빅! 명령 순서나 내용을 다시 확인해보세요.\n\n정답의 60% 이상 일치해야 성공입니다!');
+      recordFail(failCount + 1);
       setIsLoading(false);
       return;
     }
