@@ -26,7 +26,7 @@ type Stage = {
 
 const STAGES: Stage[] = [
   {
-    timeLimit: 30,
+    timeLimit: 45,
     variants: [
       {
         title: '🍞 아침에 일어나기',
@@ -62,7 +62,7 @@ const STAGES: Stage[] = [
     concept: { title: '순차(Sequence)', desc: '컴퓨터는 명령을 위에서 아래로 순서대로 실행해요.\n\n순서가 틀리면 엉뚱한 결과가 나와요! 논리적인 순서가 핵심입니다.' },
   },
   {
-    timeLimit: 25,
+    timeLimit: 35,
     variants: [
       {
         title: '🍜 컵라면 끓이기',
@@ -98,7 +98,7 @@ const STAGES: Stage[] = [
     concept: { title: '분해(Decomposition)', desc: '복잡한 문제를 작은 단계로 나누는 것!\n\n컵라면도 "열기→스프→물→기다리기→젓기→먹기"처럼 작은 명령으로 분해해야 해요.' },
   },
   {
-    timeLimit: 22,
+    timeLimit: 25,
     variants: [
       {
         title: '🥤 자판기에서 음료 뽑기',
@@ -134,7 +134,7 @@ const STAGES: Stage[] = [
     concept: { title: '알고리즘(Algorithm)', desc: '목표를 달성하기 위한 정확한 절차!\n\n순서와 조건을 모두 고려해야 해요. 이게 바로 알고리즘 사고예요!' },
   },
   {
-    timeLimit: 18,
+    timeLimit: 20,
     variants: [
       {
         title: '🛒 마트에서 장보기',
@@ -207,7 +207,7 @@ const STAGES: Stage[] = [
   },
 ];
 
-const STAGE_TIMES = [30, 25, 22, 18, 15];
+const STAGE_TIMES = [45, 35, 25, 20, 15];
 
 const RANKINGS = [
   { maxTime: 60,  emoji: '🏆', label: '알고리즘 천재!',    desc: '놀라운 속도예요! 타고난 개발자 감각을 가졌어요.' },
