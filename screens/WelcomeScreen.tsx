@@ -20,6 +20,16 @@ export default function WelcomeScreen({ onLogin, onSignup }: Props) {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.inner} showsVerticalScrollIndicator={false}>
+        {/* 바보로봇 코딩 안내 배너 — 최상단 */}
+        <TouchableOpacity style={styles.baboBanner} onPress={() => nav.navigate('BaboRobot', { stageIndex: 0 })}>
+          <Text style={styles.baboBannerEmoji}>🤖</Text>
+          <View style={styles.baboBannerBody}>
+            <Text style={styles.baboBannerTitle}>바보로봇 코딩 — NEW!</Text>
+            <Text style={styles.baboBannerDesc}>명령을 그대로만 따르는 바보로봇과 함께{'\n'}알고리즘 사고를 재미있게 배워요!</Text>
+          </View>
+          <Text style={styles.baboBannerArrow}>›</Text>
+        </TouchableOpacity>
+
         <Text style={styles.robot}>🤖</Text>
         <Text style={styles.title}>AI Ready</Text>
         <Text style={styles.tagline1}>AI 완전 초보부터</Text>
@@ -54,16 +64,6 @@ export default function WelcomeScreen({ onLogin, onSignup }: Props) {
         <TouchableOpacity style={styles.textBtn} onPress={() => nav.navigate('DiagnosticIntro')}>
           <Text style={styles.textBtnText}>비회원으로 시작하기</Text>
         </TouchableOpacity>
-
-        {/* 바보로봇 코딩 배너 */}
-        <TouchableOpacity style={styles.baboBanner} onPress={() => nav.navigate('BaboRobot', { stageIndex: 0 })}>
-          <Text style={styles.baboBannerEmoji}>🤖</Text>
-          <View style={styles.baboBannerBody}>
-            <Text style={styles.baboBannerTitle}>바보로봇 코딩 — NEW!</Text>
-            <Text style={styles.baboBannerDesc}>명령을 그대로만 따르는 바보로봇과 함께{'\n'}알고리즘 사고를 재미있게 배워요!</Text>
-          </View>
-          <Text style={styles.baboBannerArrow}>›</Text>
-        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );
@@ -75,9 +75,27 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 32,
-    paddingTop: 60,
+    paddingTop: 40,
     paddingBottom: 40,
   },
+  baboBanner: {
+    backgroundColor: '#1A1A2E',
+    borderRadius: 16,
+    padding: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    maxWidth: 380,
+    borderLeftWidth: 4,
+    borderLeftColor: '#00FF88',
+    gap: 12,
+    marginBottom: 32,
+  },
+  baboBannerEmoji: { fontSize: 32 },
+  baboBannerBody: { flex: 1 },
+  baboBannerTitle: { color: '#00FF88', fontWeight: '800', fontSize: 13, marginBottom: 4 },
+  baboBannerDesc: { color: 'rgba(255,255,255,0.75)', fontSize: 12, lineHeight: 17 },
+  baboBannerArrow: { color: '#00FF88', fontSize: 22, fontWeight: '700' },
   robot: { fontSize: 72, marginBottom: 12 },
   title: { fontSize: 36, fontWeight: '800', color: '#1A1A2E', marginBottom: 6 },
   tagline1: { fontSize: 18, color: '#6C63FF', fontWeight: '600' },
@@ -126,22 +144,4 @@ const styles = StyleSheet.create({
   secondaryBtnText: { color: '#6C63FF', fontSize: 16, fontWeight: '700' },
   textBtn: { marginTop: 20, paddingVertical: 12, paddingHorizontal: 16, minHeight: 44 },
   textBtnText: { color: '#9E9E9E', fontSize: 14, textDecorationLine: 'underline' },
-  baboBanner: {
-    marginTop: 24,
-    backgroundColor: '#1A1A2E',
-    borderRadius: 16,
-    padding: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '100%',
-    maxWidth: 380,
-    borderLeftWidth: 4,
-    borderLeftColor: '#00FF88',
-    gap: 12,
-  },
-  baboBannerEmoji: { fontSize: 32 },
-  baboBannerBody: { flex: 1 },
-  baboBannerTitle: { color: '#00FF88', fontWeight: '800', fontSize: 13, marginBottom: 4 },
-  baboBannerDesc: { color: 'rgba(255,255,255,0.75)', fontSize: 12, lineHeight: 17 },
-  baboBannerArrow: { color: '#00FF88', fontSize: 22, fontWeight: '700' },
 });
